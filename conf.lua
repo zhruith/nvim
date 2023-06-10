@@ -27,6 +27,7 @@ require('ayu').setup {
       DiagnosticHint = gray,
       SpecialKey = gray,
       NvimTreeIndentMarker = gray,
+      Folded = { fg = 'darkgray', bg = 'black' },
     }
   end,
 }
