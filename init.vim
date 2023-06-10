@@ -215,9 +215,13 @@ nnoremap <F3> :set hlsearch! <CR>
 
 "Edit config setting file by $MYVIMRC
 nnoremap <silent><nowait> <S-A-c> :e $MYVIMRC<CR>
-nnoremap <silent><nowait> <S-A-l> :e ~/AppData/Local/nvim/conf.lua<CR>
+nnoremap <silent><nowait> <S-A-l> :call <SID>OpenLuaConf()<CR>
 nnoremap <silent><nowait> <S-A-r> :<c-u>so$MYVIMRC\|colo ayu<cr>
 
+function! s:OpenLuaConf()
+  let home = coc#util#get_config_home()
+  execute 'edit '.fnameescape(home.'/conf.lua')
+endfunction
 
 
 " Theme setup
@@ -260,11 +264,13 @@ set wildmenu
 set wildmode=list:longest,full
 set wildignore=*.dll,*.exe,*.jpg,*.gif,*.png
 
-set shell=pwsh.exe
-"let &shellcmdflag = '-c' "for bash shell
-let &shellcmdflag = '-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command '
-let &shellpipe    = '| Out-File -Encoding UTF8 %s'
-let &shellredir   = '| Out-File -Encoding UTF8 %s'
+if has('win32') || has('win64')
+  set shell=pwsh.exe
+  "let &shellcmdflag = '-c' "for bash shell
+  let &shellcmdflag = '-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command '
+  let &shellpipe    = '| Out-File -Encoding UTF8 %s'
+  let &shellredir   = '| Out-File -Encoding UTF8 %s'
+endif
 set shellxquote= shellxquote=
 
 
