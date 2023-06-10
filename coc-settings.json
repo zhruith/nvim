@@ -1,5 +1,5 @@
 {
-    "rust-analyzer.server.path": "~/.rustup/toolchains/stable-x86_64-pc-windows-msvc/bin/rust-analyzer",
+    "rust-analyzer.server.path": "rust-analyzer",
 
     "pylsp.plugins.ruff.ignore": ["F841","F401","E402","E722","F811","E501"],
     "pylsp.plugins.ruff.lineLength": 120,
