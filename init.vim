@@ -7,13 +7,13 @@ call plug#begin('~/.vim/plugged')
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'nvim-treesitter/nvim-treesitter', { 'do': ':TSUpdate' }
-Plug 'shatur/neovim-ayu'
+Plug 'nvim-tree/nvim-tree.lua'
 Plug 'nvim-lualine/lualine.nvim'
 Plug 'nvim-tree/nvim-web-devicons'
 Plug 'akinsho/bufferline.nvim'
 Plug 'akinsho/toggleterm.nvim'
+Plug 'shatur/neovim-ayu'
 Plug 'lewis6991/gitsigns.nvim'
-Plug 'nvim-tree/nvim-tree.lua'
 "Plug 'puremourning/vimspector'
 call plug#end()
 
