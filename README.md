@@ -2,4 +2,4 @@
 
 Private configurations git respository.
 
-Use it by youself no copyright.
+Use it by yourself no copyright.

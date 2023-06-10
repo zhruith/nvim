@@ -10,8 +10,6 @@
     "pylsp.plugins.pycodestyle.enabled": false,
     "clangd.compilationDatabaseCandidates": [],
 
-    "sumneko-lua.serverDir": "C:/Users/zhrui/scoop/apps/lua-language-server/current",
-
     "Lua.diagnostics.globals": ["vim"],
     
     "diagnostic.errorSign": "",
