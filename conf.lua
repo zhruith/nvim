@@ -38,13 +38,13 @@ require 'ayu'.colorscheme()
 require('gitsigns').setup {
   signs = {
     add = {
-      text = icons.ui.LineLeft,
+      text = icons.ui.LineMiddle,
       hl = "GitSignsAdd",
       numhl = "GitSignsAddNr",
       linehl = "GitSignsAddLn",
     },
     change = {
-      text = icons.ui.LineLeft,
+      text = icons.ui.LineMiddle,
       hl = "GitSignsChange",
       numhl = "GitSignsChangeNr",
       linehl = "GitSignsChangeLn",
@@ -62,7 +62,7 @@ require('gitsigns').setup {
       linehl = "GitSignsDeleteLn",
     },
     changedelete = {
-      text = icons.ui.LineLeft,
+      text = icons.ui.LineMiddle,
       hl = "GitSignsChange",
       numhl = "GitSignsChangeNr",
       linehl = "GitSignsChangeLn",
