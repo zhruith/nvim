@@ -167,13 +167,13 @@ map <silent> gc M
 map <silent> ge G
 
 
-nnoremap <silent><A-1> <Cmd>exe v:count . "ToggleTerm direction=horizontal"<CR>
-nnoremap <silent><A-2> <Cmd>exe v:count . "ToggleTerm direction=vertical"<CR>
-nnoremap <silent><A-3> <Cmd>exe v:count . "ToggleTerm direction=float"<CR>
+nnoremap <silent><M-1> <Cmd>exe v:count . "ToggleTerm direction=horizontal"<CR>
+nnoremap <silent><M-2> <Cmd>exe v:count . "ToggleTerm direction=vertical"<CR>
+nnoremap <silent><M-3> <Cmd>exe v:count . "ToggleTerm direction=float"<CR>
 
-autocmd TermEnter term://*toggleterm#* tnoremap <silent><A-1> <Cmd>exe v:count . "ToggleTerm"<CR>
-autocmd TermEnter term://*toggleterm#* tnoremap <silent><A-2> <Cmd>exe v:count . "ToggleTerm"<CR>
-autocmd TermEnter term://*toggleterm#* tnoremap <silent><A-3> <Cmd>exe v:count . "ToggleTerm"<CR>
+autocmd TermEnter term://*toggleterm#* tnoremap <silent><M-1> <Cmd>exe v:count . "ToggleTerm"<CR>
+autocmd TermEnter term://*toggleterm#* tnoremap <silent><M-2> <Cmd>exe v:count . "ToggleTerm"<CR>
+autocmd TermEnter term://*toggleterm#* tnoremap <silent><M-3> <Cmd>exe v:count . "ToggleTerm"<CR>
 
 "nnoremap <silent><A-1> <Cmd>exe v:count . "ToggleTerm"<CR>
 "inoremap <silent><A-1> <Esc><Cmd>exe v:count . "ToggleTerm"<CR>

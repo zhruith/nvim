@@ -188,6 +188,9 @@ require('lualine').setup {
 require('toggleterm').setup {
   persist_mode = false,
   persist_size = true,
+  winbar = {
+    enabled = false,
+  },
   size = function(term)
     if term.direction == 'horizontal' then
       return 15
@@ -433,7 +436,7 @@ require('nvim-tree').setup {
     change_dir = {
       enable = false,
       global = true,
-      restrict_above_cwd = true,
+      restrict_above_cwd = false,
     },
     expand_all = {
       max_folder_discovery = 300,
