@@ -17,6 +17,8 @@
     "diagnostic.infoSign": "",
     "diagnostic.hintSign": "",
 
+    "volar.autoClosingTags": true,
+
     "inlayHint.enable": false
 }
 

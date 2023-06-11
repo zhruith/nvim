@@ -155,7 +155,6 @@ map <silent> gk :<C-u>CocCommand document.jumpToPrevSymbol<cr>
 map <silent> gn :<C-u>bn<cr>
 map <silent> gp :<C-u>bp<cr>
 map <silent> gq :<C-u>b#\|bd#<cr>
-"map <silent> gq <cmd>BufferKill<cr>
 map <silent> gW :<C-w>q<cr>
 map <silent> gQ :<C-u>%bd!\|e#\|bd#<cr>
 map <silent> ga :<C-u>e#<cr>
