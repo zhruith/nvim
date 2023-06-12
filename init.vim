@@ -165,6 +165,9 @@ map <silent> gl $
 map <silent> gc M
 map <silent> ge G
 
+vmap <silent> < <gv
+vmap <silent> > >gv
+
 
 nnoremap <silent><M-1> <Cmd>exe v:count . "ToggleTerm direction=horizontal"<CR>
 nnoremap <silent><M-2> <Cmd>exe v:count . "ToggleTerm direction=vertical"<CR>
@@ -177,19 +180,24 @@ autocmd TermEnter term://*toggleterm#* tnoremap <silent><M-3> <Cmd>exe v:count .
 "nnoremap <silent><A-1> <Cmd>exe v:count . "ToggleTerm"<CR>
 "inoremap <silent><A-1> <Esc><Cmd>exe v:count . "ToggleTerm"<CR>
 
-map <m-h> <c-w>h
-map <m-l> <c-w>l
-map <m-j> <c-w>j
-map <m-k> <c-w>kl
+"""""""""""" swich window """"""""""""""""
 
+map <c-h> <c-w>h
+map <c-l> <c-w>l
+map <c-j> <c-w>j
+map <c-k> <c-w>k
 
+inoremap <c-h> <Esc><c-w>h
+inoremap <c-l> <Esc><c-w>l
+inoremap <c-j> <Esc><c-w>j
+inoremap <c-k> <Esc><c-w>k
 
-tnoremap <m-h> <c-\><c-n><c-w>h
-tnoremap <m-l> <c-\><c-n><c-w>l
-tnoremap <m-j> <c-\><c-n><c-w>j
-tnoremap <m-k> <c-\><c-n><c-w>k
-tnoremap <m--> <c-\><c-n>"0pa
-tnoremap <m-q> <c-\><c-n>
+tnoremap <c-h> <c-\><c-n><c-w>h
+tnoremap <c-l> <c-\><c-n><c-w>l
+tnoremap <c-j> <c-\><c-n><c-w>j
+tnoremap <c-k> <c-\><c-n><c-w>k
+tnoremap <c--> <c-\><c-n>"0pa
+tnoremap <c-q> <c-\><c-n>
 
 
 """"""""""""""" resize window """"""""""""""""""
@@ -208,6 +216,15 @@ tnoremap <silent><c-m-l> <c-\><c-n>:vertical resize +2<cr>a
 tnoremap <silent><c-m-j> <c-\><c-n>:resize -2<cr>a
 tnoremap <silent><c-m-k> <c-\><c-n>:resize +2<cr>a
 
+
+"""""""""""""move line """""""""""""""""""
+
+imap <m-j> <Esc>:m .+1<CR>a
+imap <m-k> <Esc>:m .-2<CR>a
+nmap <m-j> :m .+1<CR>
+nmap <m-k> :m .-2<CR>
+vmap <m-j> :m '>+1<CR>gv-gv
+vmap <m-k> :m '<-2<CR>gv-gv
 
 nnoremap <F3> :set hlsearch! <CR>
 
