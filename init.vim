@@ -32,7 +32,6 @@ let g:coc_global_extensions = [
       \ '@yaegassy/coc-pylsp',
       \ '@yaegassy/coc-volar',
       \ '@yaegassy/coc-volar-tools',
-      \ 'coc-jsref',
       \ 'coc-css',
       \ 'coc-html',
       \ 'coc-sumneko-lua',
