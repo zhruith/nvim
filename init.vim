@@ -17,6 +17,27 @@ Plug 'lewis6991/gitsigns.nvim'
 "Plug 'puremourning/vimspector'
 call plug#end()
 
+let g:coc_global_extensions = [ 
+      \ 'coc-clangd',
+      \ 'coc-cmake',
+      \ 'coc-emmet',
+      \ 'coc-json',
+      \ 'coc-pairs',
+      \ 'coc-rust-analyzer',
+      \ 'coc-tsserver',
+      \ 'coc-toml',
+      \ 'coc-marketplace',
+      \ 'coc-lists',
+      \ 'coc-vimlsp',
+      \ '@yaegassy/coc-pylsp',
+      \ '@yaegassy/coc-volar',
+      \ '@yaegassy/coc-volar',
+      \ 'coc-css',
+      \ 'coc-html',
+      \ 'coc-sumneko-lua',
+      \ ]
+
+
 inoremap <silent><expr><TAB> coc#pum#visible() ? coc#pum#next(1) :
       \ CheckBackspace() ? "\<Tab>" : coc#refresh()
 inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
@@ -121,8 +142,8 @@ endif
 
 " Use CTRL-S for selections ranges.
 " Requires 'textDocument/selectionRange' support of language server.
-nmap <silent> <C-s> <Plug>(coc-range-select)
-xmap <silent> <C-s> <Plug>(coc-range-select)
+"nmap <silent> <C-s> <Plug>(coc-range-select)
+"xmap <silent> <C-s> <Plug>(coc-range-select)
 
 command! -nargs=0 Format :call   CocActionAsync('format')
 command! -nargs=? Fold :call     CocAction('fold', <f-args>)
@@ -167,6 +188,9 @@ map <silent> ge G
 
 vmap <silent> < <gv
 vmap <silent> > >gv
+
+map <silent> <C-s> :w<CR>
+inoremap <silent> <C-s> <Esc>:w<CR>
 
 
 nnoremap <silent><M-1> <Cmd>exe v:count . "ToggleTerm direction=horizontal"<CR>
@@ -256,7 +280,7 @@ set smartcase
 set nobackup
 set nowritebackup
 
-set updatetime=100
+set updatetime=300
 
 " Don't pass messages to |ins-completion-menu|.
 set shortmess+=c
