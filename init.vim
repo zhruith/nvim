@@ -263,24 +263,16 @@ function! s:OpenLuaConf()
   execute 'edit '.fnameescape(home.'/conf.lua')
 endfunction
 
-
-" Theme setup
-
-set termguicolors
-
-
-let g:airline_powerline_fonts = 1
-
 set number
 set notimeout
 set ignorecase
 set smartcase
 
-
 set nobackup
 set nowritebackup
+set termguicolors
 
-set updatetime=300
+set updatetime=150
 
 " Don't pass messages to |ins-completion-menu|.
 set shortmess+=c
@@ -288,13 +280,16 @@ set shortmess+=c
 set foldmethod=manual
 set foldexpr=''
 
-"set smartindent
-filetype indent plugin on
+set signcolumn=yes
+set scrolloff=5
+set sidescrolloff=5
+
 set expandtab
 set tabstop=2
 set softtabstop=2
 set shiftwidth=2
-set signcolumn=yes
+set smartindent
+filetype indent plugin on
 
 set nohlsearch
 set cursorline

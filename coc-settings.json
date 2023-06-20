@@ -2,13 +2,13 @@
     "rust-analyzer.server.path": "rust-analyzer",
 
     "pylsp.plugins.ruff.ignore": ["F841","F401","E402","E722","F811","E501"],
-    "pylsp.plugins.ruff.lineLength": 120,
+    "pylsp.plugins.ruff.lineLength": 100,
     "pylsp.plugins.flake8.enabled": false,
     "pylsp.plugins.pyflakes.enabled": false,
     "pylsp.plugins.mccabe.enabled": true,
     "pylsp.plugins.mccabe.threshold": 15,
     "pylsp.plugins.pycodestyle.enabled": false,
-    "clangd.compilationDatabaseCandidates": [],
+    "pylsp.plugins.pycodestyle.maxLineLength": 100,
 
     "Lua.diagnostics.globals": ["vim"],
     
