@@ -14,7 +14,7 @@ Plug 'akinsho/bufferline.nvim'
 Plug 'akinsho/toggleterm.nvim'
 Plug 'shatur/neovim-ayu'
 Plug 'lewis6991/gitsigns.nvim'
-"Plug 'puremourning/vimspector'
+Plug 'puremourning/vimspector'
 call plug#end()
 
 let g:coc_global_extensions = [ 
@@ -175,7 +175,7 @@ map <silent> gk :<C-u>CocCommand document.jumpToPrevSymbol<cr>
 
 map <silent> gn :<C-u>bn<cr>
 map <silent> gp :<C-u>bp<cr>
-map <silent> gq :<C-u>b#\|bd#<cr>
+map <silent> gq :<C-u>bp\|bd#<cr>
 map <silent> gW :<C-w>q<cr>
 map <silent> gQ :<C-u>%bd!\|e#\|bd#<cr>
 map <silent> ga :<C-u>e#<cr>
@@ -250,7 +250,7 @@ nmap <m-k> :m .-2<CR>
 vmap <m-j> :m '>+1<CR>gv-gv
 vmap <m-k> :m '<-2<CR>gv-gv
 
-nnoremap <F3> :set hlsearch! <CR>
+nnoremap <F2> :set hlsearch! <CR>
 
 
 "Edit config setting file by $MYVIMRC
@@ -282,7 +282,7 @@ set foldexpr=''
 
 set signcolumn=yes
 set scrolloff=5
-set sidescrolloff=5
+" set sidescrolloff=5
 
 set expandtab
 set tabstop=2
@@ -308,5 +308,8 @@ if has('win32') || has('win64')
 endif
 set shellxquote= shellxquote=
 
+let g:vimspector_install_gadgets = ['debugpy','vscode-cpptools']
+let g:vimspector_base_dir= expand('$HOME/.vim/plugged/vimspector')
+let g:vimspector_enable_mappings = 'HUMAN'
 
 runtime conf.lua
