@@ -308,8 +308,9 @@ if has('win32') || has('win64')
 endif
 set shellxquote= shellxquote=
 
-let g:vimspector_install_gadgets = ['debugpy','vscode-cpptools']
 let g:vimspector_base_dir= expand('$HOME/.vim/plugged/vimspector')
-let g:vimspector_enable_mappings = 'HUMAN'
+let g:vimspector_install_gadgets = ['debugpy','vscode-cpptools']
+let g:vimspector_enable_mappings = 'VISUAL_STUDIO'
+nnoremap <f7> :call vimspector#Reset()<CR>
 
 runtime conf.lua
