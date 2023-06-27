@@ -146,7 +146,7 @@ endif
 "xmap <silent> <C-s> <Plug>(coc-range-select)
 
 command! -nargs=0 Format :call   CocActionAsync('format')
-command! -nargs=? Fold :call     CocAction('fold', <f-args>)
+command! -nargs=0 Fold :call     CocAction('fold', <f-args>)
 command! -nargs=0 OR   :call     CocActionAsync('runCommand', 'editor.action.organizeImport')
 
 " Mappings for CoCList
