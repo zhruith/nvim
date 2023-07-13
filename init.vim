@@ -7,6 +7,7 @@ call plug#begin('~/.vim/plugged')
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'nvim-treesitter/nvim-treesitter', { 'do': ':TSUpdate' }
+Plug 'puremourning/vimspector'
 Plug 'nvim-tree/nvim-tree.lua'
 Plug 'nvim-lualine/lualine.nvim'
 Plug 'nvim-tree/nvim-web-devicons'
@@ -14,7 +15,6 @@ Plug 'akinsho/bufferline.nvim'
 Plug 'akinsho/toggleterm.nvim'
 Plug 'shatur/neovim-ayu'
 Plug 'lewis6991/gitsigns.nvim'
-Plug 'puremourning/vimspector'
 call plug#end()
 
 let g:coc_global_extensions = [ 
@@ -225,7 +225,7 @@ tnoremap <c-q> <c-\><c-n>
 
 
 """"""""""""""" resize window """"""""""""""""""
-nmap <silent><c-m-h> :vertical resize -2<cr>
+nmap <silent><c-m-h> :vertical resize -3<cr>
 nmap <silent><c-m-l> :vertical resize +2<cr>
 nmap <silent><c-m-j> :resize -2<cr>
 nmap <silent><c-m-k> :resize +2<cr>
@@ -270,6 +270,8 @@ set smartcase
 
 set nobackup
 set nowritebackup
+set nowrap
+
 set termguicolors
 
 set updatetime=150
@@ -313,4 +315,4 @@ let g:vimspector_install_gadgets = ['debugpy','vscode-cpptools']
 let g:vimspector_enable_mappings = 'VISUAL_STUDIO'
 nnoremap <f7> :call vimspector#Reset()<CR>
 
-runtime conf.lua
+ru conf.lua
