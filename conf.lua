@@ -25,7 +25,7 @@ require('ayu').setup {
       DiagnosticHint = gray,
       SpecialKey = gray,
       NvimTreeIndentMarker = gray,
-      Folded = { fg = 'lightgray', bg =nil },
+      Folded = { fg = 'lightgray', bg = nil },
     }
   end,
 }
@@ -221,8 +221,8 @@ local function diagnostics_indicator(num, _, diagnostics, _)
       table.insert(result, symbols[name] .. "" .. count)
     end
   end
-  result = table.concat(result, " ")
-  return #result > 0 and result or ""
+  local res = table.concat(result, " ")
+  return #res > 0 and res or ""
 end
 
 local function custom_filter(buf, buf_nums)
