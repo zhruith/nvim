@@ -21,5 +21,6 @@
   "diagnostic.hintSign": "",
 
   "volar.autoClosingTags": true,
-  "inlayHint.enable": false
+  "inlayHint.enable": false,
+  "coc.preferences.extensionUpdateCheck": "never"
 }

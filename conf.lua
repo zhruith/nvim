@@ -250,9 +250,12 @@ bufferline.setup {
       bufferline.style_preset.nobold,
     },
     always_show_bufferline = false,
-    offsets = { { filetype = 'NvimTree' } },
+    offsets = {
+      { filetype = 'NvimTree' },
+      { filetype = 'netrw' }
+    },
     diagnostics = 'coc',
-    diagnostics_update_in_insert = false,
+    diagnostics_update_in_insert = true,
     diagnostics_indicator = diagnostics_indicator,
     custom_filter = custom_filter,
   },
@@ -302,13 +305,12 @@ require('nvim-tree').setup {
   reload_on_bufenter = false,
   respect_buf_cwd = true,
   on_attach = on_attach,
-  remove_keymaps = false,
   select_prompts = false,
   view = {
     adaptive_size = false,
     centralize_selection = true,
     width = 30,
-    hide_root_folder = false,
+    --hide_root_folder = false,
     side = "left",
     preserve_window_proportions = false,
     number = false,
@@ -385,7 +387,7 @@ require('nvim-tree').setup {
     symlink_destination = true,
   },
   hijack_directories = {
-    enable = false,
+    enable = true,
     auto_open = true,
   },
   update_focused_file = {
