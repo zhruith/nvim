@@ -15,6 +15,7 @@ Plug 'akinsho/bufferline.nvim'
 Plug 'akinsho/toggleterm.nvim'
 Plug 'shatur/neovim-ayu'
 Plug 'lewis6991/gitsigns.nvim'
+Plug 'yaegassy/coc-ruff', {'do': 'npm install --frozen-lockfile'}
 call plug#end()
 
 let g:coc_global_extensions = [ 
@@ -29,6 +30,7 @@ let g:coc_global_extensions = [
       \ 'coc-marketplace',
       \ 'coc-lists',
       \ 'coc-vimlsp',
+      \ '@yaegassy/coc-ruff',
       \ '@yaegassy/coc-pylsp',
       \ '@yaegassy/coc-volar',
       \ '@yaegassy/coc-volar-tools',
@@ -152,8 +154,8 @@ command! -nargs=0 OR   :call     CocActionAsync('runCommand', 'editor.action.org
 nnoremap <silent><nowait> <space>d :<C-u>CocList diagnostics<cr>
 nnoremap <silent><nowait> <space>x :<C-u>CocList extensions<cr>
 nnoremap <silent><nowait> <space>c :<C-u>CocList commands<cr>
-nnoremap <silent><nowait> <space>o :<C-u>CocList outline<cr>
-nnoremap <silent><nowait> <space>s :<C-u>CocList symbols<cr>
+nnoremap <silent><nowait> <space>s :<C-u>CocList outline<cr>
+nnoremap <silent><nowait> <space>S :<C-u>CocList symbols<cr>
 nnoremap <silent><nowait> <space>m :<C-u>CocList marketplace<cr>
 nnoremap <silent><nowait> <space>b :<C-u>CocList buffers<cr>
 nnoremap <silent><nowait> <space>j :<C-u>CocNext<CR>
@@ -169,8 +171,8 @@ nnoremap <silent><nowait> <space>v :<C-u>CocList vimcommands<CR>
 
 
 "Goto keymap
-map <silent> gj :<C-u>CocCommand document.jumpToNextSymbol<cr>
-map <silent> gk :<C-u>CocCommand document.jumpToPrevSymbol<cr>
+map <silent> ( :<C-u>CocCommand document.jumpToNextSymbol<cr>
+map <silent> ) :<C-u>CocCommand document.jumpToPrevSymbol<cr>
 
 map <silent> gn :<C-u>bn<cr>
 map <silent> gp :<C-u>bp<cr>
@@ -282,7 +284,7 @@ set foldmethod=manual
 set foldexpr=''
 
 set signcolumn=yes
-set scrolloff=5
+set scrolloff=3
 " set sidescrolloff=5
 
 set expandtab
@@ -312,6 +314,6 @@ set shellxquote= shellxquote=
 let g:vimspector_base_dir= expand('$HOME/.vim/plugged/vimspector')
 let g:vimspector_install_gadgets = ['debugpy','vscode-cpptools']
 let g:vimspector_enable_mappings = 'VISUAL_STUDIO'
-nnoremap <f7> :call vimspector#Reset()<CR>
+"nnoremap <f7> :call vimspector#Reset()<CR>
 
 ru conf.lua

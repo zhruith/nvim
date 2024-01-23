@@ -18,7 +18,7 @@ require('ayu').setup {
       CursorLine = { bg = lightBlue },
       CursorLineNr = { bg = lightBlue },
       Search = { bg = ayu.ui },
-      Comment = gray,
+      --Comment = gray,
       LineNr = { fg = ayu.comment },
       CocHighlightText = { bg = '#505050' },
       NonText = gray,
@@ -109,22 +109,26 @@ require('lualine').setup {
   options = {
     theme = llayu,
     globalstatus = true,
-    component_separators = '·',
+    component_separators = {
+      left = icons.ui.ChevronShortRight,
+      right = icons.ui.ChevronShortLeft
+
+    }, --icons.ui.TriangleShortArrowLeft,--'·',
     --component_separators = { right = icons.ui.TriangleShortArrowLeft, left = icons.ui.TriangleShortArrowRight },
     section_separators = {
-      left = icons.ui.SemicircleRight,
-      right = icons.ui.SemicircleLeft
+      --left = icons.ui.SemicircleRight,
+      --right = icons.ui.SemicircleLeft
     },
     disabled_filetypes = {
-      statusline = { '', 'list' },
+      statusline = { 'list', '' },
       winbar = {}
     },
   },
   sections = {
     lualine_a = {
       {
-        function() return ' ' .. icons.misc.Vimlogo2 end,
-        padding = 0,
+        function() return icons.misc.Vimlogo2 end,
+        padding = 1,
       },
     },
     lualine_b = {
@@ -246,7 +250,7 @@ local bufferline = require('bufferline')
 bufferline.setup {
   options = {
     style_preset = {
-      bufferline.style_preset.no_italic,
+      --bufferline.style_preset.no_italic,
       bufferline.style_preset.nobold,
     },
     always_show_bufferline = false,
