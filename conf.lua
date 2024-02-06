@@ -514,7 +514,7 @@ require('nvim-tree').setup {
 ---------------- treesitter config ----------------
 
 require('nvim-treesitter.configs').setup {
-  ensure_installed = { 'rust', 'python', 'c', 'cpp', 'toml', 'vim', 'vimdoc', 'vue' },
+  ensure_installed = { 'rust', 'python', 'c', 'cpp', 'toml', 'vim', 'vimdoc', 'vue', 'javascript', 'typescript' },
   sync_install = true,
   auto_install = true,
   highlight = {
