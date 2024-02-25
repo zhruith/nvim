@@ -313,7 +313,7 @@ if has('win32') || has('win64')
   let &shellpipe    = '| Out-File -Encoding UTF8 %s'
   let &shellredir   = '| Out-File -Encoding UTF8 %s'
 else 
-  let g:python3_host_prog = '$HOME/.local/bin/python3'
+  let g:python3_host_prog = '$HOME/.venv/bin/python3'
 endif
 set shellxquote= shellxquote=
 
