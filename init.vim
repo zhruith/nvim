@@ -3,6 +3,10 @@ if has("autocmd")
         \ line("$") | exe "normal! g'\"" | endif
 endif
 
+augroup JsonToJsonc
+    autocmd! FileType json set filetype=jsonc
+augroup END
+
 call plug#begin('~/.vim/plugged')
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
@@ -308,6 +312,8 @@ if has('win32') || has('win64')
   let &shellcmdflag = '-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command '
   let &shellpipe    = '| Out-File -Encoding UTF8 %s'
   let &shellredir   = '| Out-File -Encoding UTF8 %s'
+else 
+  let g:python3_host_prog = '$HOME/.local/bin/python3'
 endif
 set shellxquote= shellxquote=
 
