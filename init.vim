@@ -34,7 +34,6 @@ let g:coc_global_extensions = [
       \ 'coc-marketplace',
       \ 'coc-lists',
       \ 'coc-vimlsp',
-      \ '@yaegassy/coc-ruff',
       \ '@yaegassy/coc-pylsp',
       \ '@yaegassy/coc-volar',
       \ '@yaegassy/coc-volar-tools',

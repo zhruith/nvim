@@ -1,11 +1,9 @@
 {
-  "http.proxy": "http://192.168.0.115:10809",
   "rust-analyzer.server.path": "rust-analyzer",
   "rust-analyzer.server.extraEnv": { "CARGO_TARGET_DIR": "target/analyzer" },
   "rust-analyzer.check.extraArgs": [ "--target-dir=target/analyzer" ],
 
   "pylsp.plugins.ruff.ignore": [ "F401", "F811" ],
-  "pylsp.plugins.pycodestyle.enabled": false,
 
   "clangd.fallbackFlags": [
     "-I${workspaceFolder}",
