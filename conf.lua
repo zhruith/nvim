@@ -258,7 +258,7 @@ bufferline.setup {
       { filetype = 'NvimTree' },
       { filetype = 'netrw' }
     },
-    diagnostics = 'coc',
+    --diagnostics = 'coc',
     diagnostics_update_in_insert = true,
     diagnostics_indicator = diagnostics_indicator,
     custom_filter = custom_filter,
