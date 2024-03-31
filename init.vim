@@ -20,6 +20,7 @@ Plug 'akinsho/toggleterm.nvim'
 Plug 'shatur/neovim-ayu'
 Plug 'lewis6991/gitsigns.nvim'
 Plug 'yaegassy/coc-ruff', {'do': 'npm install --frozen-lockfile'}
+Plug 'easymotion/vim-easymotion'
 call plug#end()
 
 let g:coc_global_extensions = [ 
@@ -190,6 +191,7 @@ map <silent> gs ^
 map <silent> gl $
 map <silent> gc M
 map <silent> ge G
+map <silent> s <Plug>(easymotion-overwin-f2)
 
 vmap <silent> < <gv
 vmap <silent> > >gv
@@ -321,5 +323,7 @@ let g:vimspector_base_dir= expand('$HOME/.vim/plugged/vimspector')
 let g:vimspector_install_gadgets = ['debugpy','vscode-cpptools']
 let g:vimspector_enable_mappings = 'VISUAL_STUDIO'
 "nnoremap <f7> :call vimspector#Reset()<CR>
+
+let g:EasyMotion_smartcase = 1
 
 ru conf.lua
