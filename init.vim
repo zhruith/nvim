@@ -191,7 +191,7 @@ map <silent> gs ^
 map <silent> gl $
 map <silent> gc M
 map <silent> ge G
-map <silent> s <Plug>(easymotion-overwin-w)
+map <silent> s <Plug>(easymotion-bd-w)
 map Sj <Plug>(easymotion-j)
 map Sk <Plug>(easymotion-k)
 
