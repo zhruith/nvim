@@ -191,7 +191,9 @@ map <silent> gs ^
 map <silent> gl $
 map <silent> gc M
 map <silent> ge G
-map <silent> s <Plug>(easymotion-overwin-f2)
+map <silent> s <Plug>(easymotion-overwin-w)
+map Sj <Plug>(easymotion-j)
+map Sk <Plug>(easymotion-k)
 
 vmap <silent> < <gv
 vmap <silent> > >gv
@@ -324,6 +326,7 @@ let g:vimspector_install_gadgets = ['debugpy','vscode-cpptools']
 let g:vimspector_enable_mappings = 'VISUAL_STUDIO'
 "nnoremap <f7> :call vimspector#Reset()<CR>
 
+let g:EasyMotion_do_mapping = 0
 let g:EasyMotion_smartcase = 1
 
 ru conf.lua
