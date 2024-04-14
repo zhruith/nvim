@@ -94,8 +94,8 @@ endfunction
 
 
 " Highlight the symbol and its references when holding the cursor.
-autocmd CursorHold * silent call CocActionAsync('highlight')
-"autocmd BufWritePre * silent call CocActionAsync('format')
+" autocmd CursorHold * silent call CocActionAsync('highlight')
+" autocmd BufWritePre * silent call CocActionAsync('format')
 
 
 " Symbol renaming.
@@ -154,6 +154,7 @@ endif
 command! -nargs=0 Format :call   CocActionAsync('format')
 command! -nargs=0 Fold :call     CocAction('fold', <f-args>)
 command! -nargs=0 OR   :call     CocActionAsync('runCommand', 'editor.action.organizeImport')
+command! -nargs=0 Highlight :call   CocActionAsync('highlight')
 
 " Mappings for CoCList
 nnoremap <silent><nowait> <space>d :<C-u>CocList diagnostics<cr>
@@ -194,6 +195,9 @@ map <silent> ge G
 map <silent> s <Plug>(easymotion-bd-w)
 map Sj <Plug>(easymotion-j)
 map Sk <Plug>(easymotion-k)
+
+map <silent> <M-h> :<C-u>Highlight<cr>
+
 
 vmap <silent> < <gv
 vmap <silent> > >gv
