@@ -4,6 +4,7 @@
   "rust-analyzer.check.extraArgs": [ "--target-dir=target/analyzer" ],
 
   "pylsp.plugins.ruff.ignore": [ "F401", "F811" ],
+  "pylsp.plugins.ruff.lineLength": 120,
 
   "clangd.fallbackFlags": [
     "-I${workspaceFolder}",
