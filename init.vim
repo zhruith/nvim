@@ -308,7 +308,7 @@ filetype indent plugin on
 
 set nohlsearch
 set cursorline
-set fillchars=fold:\ ,vert:\│,eob:\ ,msgsep:‾
+set fillchars+=eob:\ 
 
 set wildmenu
 set wildmode=list:longest,full
