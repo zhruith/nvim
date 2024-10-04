@@ -5,6 +5,7 @@
 
   "pylsp.plugins.ruff.ignore": [ "F401", "F811" ],
   "pylsp.plugins.ruff.lineLength": 120,
+  "inlayHint.display": false,
 
   "clangd.fallbackFlags": [
     "-I${workspaceFolder}",
@@ -17,6 +18,4 @@
   "diagnostic.warningSign": "",
   "diagnostic.infoSign": "",
   "diagnostic.hintSign": "",
-
-  "volar.autoClosingTags": true,
 }

@@ -19,7 +19,6 @@ Plug 'akinsho/bufferline.nvim'
 Plug 'akinsho/toggleterm.nvim'
 Plug 'shatur/neovim-ayu'
 Plug 'lewis6991/gitsigns.nvim'
-Plug 'yaegassy/coc-ruff', {'do': 'npm install --frozen-lockfile'}
 Plug 'easymotion/vim-easymotion'
 call plug#end()
 
