@@ -1,11 +1,13 @@
 {
+  "inlayHint.display": false,
+  "list.floatPreview": true,
+
   "rust-analyzer.server.path": "rust-analyzer",
   "rust-analyzer.server.extraEnv": { "CARGO_TARGET_DIR": "target/analyzer" },
   "rust-analyzer.check.extraArgs": [ "--target-dir=target/analyzer" ],
 
   "pylsp.plugins.ruff.ignore": [ "F401", "F811" ],
   "pylsp.plugins.ruff.lineLength": 120,
-  "inlayHint.display": false,
 
   "clangd.fallbackFlags": [
     "-I${workspaceFolder}",
