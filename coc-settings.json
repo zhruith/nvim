@@ -20,4 +20,13 @@
   "diagnostic.warningSign": "",
   "diagnostic.infoSign": "",
   "diagnostic.hintSign": "",
+
+  "languageserver": {
+    "nu": {
+      "command": "nu",
+      "args": ["--lsp"],
+      "trace.server": "verbose",
+      "filetypes": ["nu"]
+    }
+  }
 }
