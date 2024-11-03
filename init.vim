@@ -306,7 +306,7 @@ set smartindent
 filetype indent plugin on
 
 set nohlsearch
-set cursorline
+" set cursorline
 set fillchars+=eob:\ 
 
 set wildmenu
