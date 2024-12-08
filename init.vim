@@ -275,7 +275,7 @@ function! s:OpenLuaConf()
   execute 'edit '.fnameescape(home.'/conf.lua')
 endfunction
 
-set number
+" set number
 set notimeout
 set ignorecase
 set smartcase
