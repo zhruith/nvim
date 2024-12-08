@@ -73,6 +73,7 @@ nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
+nmap <silent> gf <Plug>(coc-float-jump)
 
 " Use K to show documentation in preview window.
 nnoremap <silent> K :call <SID>show_documentation()<CR>
@@ -314,7 +315,7 @@ set wildmode=list:longest,full
 set wildignore=*.dll,*.exe,*.jpg,*.gif,*.png
 
 set shell=nu
-let &shellcmdflag=' -c '
+let &shellcmdflag='-c '
 " if has('win32') || has('win64')
 "   set shell=pwsh
 "   " let &shellcmdflag = '-c' "for bash shell
@@ -325,7 +326,7 @@ let &shellcmdflag=' -c '
 "   let g:python3_host_prog = '$HOME/.venv/bin/python3'
 " endif
 " let &shellcmdflag = ' nu.exe' "for bash shell
-" set shellxquote= shellxquote=
+set shellxquote= shellxquote=
 
 let g:vimspector_base_dir= expand('$HOME/.vim/plugged/vimspector')
 let g:vimspector_install_gadgets = ['debugpy','vscode-cpptools']
