@@ -10,9 +10,9 @@ local gray = { fg = 'gray' }
 require('ayu').setup {
   overrides = function()
     return {
-      Normal = { bg = nil },
-      NormalFloat = { bg = ayu.bg },
-      SignColumn = { bg = nil },
+      Normal = { bg = "" },
+      NormalFloat = { bg = "black" },
+      SignColumn = { bg = "" },
       WinSeparator = { fg = ayu.ui },
       Visual = { bg = ayu.selection_border },
       CursorLine = { bg = lightBlue },
@@ -25,7 +25,7 @@ require('ayu').setup {
       DiagnosticHint = gray,
       SpecialKey = gray,
       NvimTreeIndentMarker = gray,
-      Folded = { fg = 'lightgray', bg = nil },
+      Folded = { fg = 'lightgray', bg = "" },
     }
   end,
 }

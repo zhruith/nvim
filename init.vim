@@ -316,16 +316,6 @@ set wildignore=*.dll,*.exe,*.jpg,*.gif,*.png
 
 set shell=nu
 let &shellcmdflag='-c '
-" if has('win32') || has('win64')
-"   set shell=pwsh
-"   " let &shellcmdflag = '-c' "for bash shell
-"   let &shellcmdflag = '-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command '
-"   let &shellpipe    = '| Out-File -Encoding UTF8 %s'
-"   let &shellredir   = '| Out-File -Encoding UTF8 %s'
-" else 
-"   let g:python3_host_prog = '$HOME/.venv/bin/python3'
-" endif
-" let &shellcmdflag = ' nu.exe' "for bash shell
 set shellxquote= shellxquote=
 
 let g:vimspector_base_dir= expand('$HOME/.vim/plugged/vimspector')
