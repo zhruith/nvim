@@ -9,12 +9,6 @@
   "pylsp.plugins.ruff.ignore": [ "F401", "F811" ],
   "pylsp.plugins.ruff.lineLength": 120,
 
-  "clangd.fallbackFlags": [
-    "-I${workspaceFolder}",
-    "-I${userHome}/scoop/apps/vcpkg/current/installed/x64-windows/include/",
-    "-I${userHome}/scoop/apps/vcpkg/current/installed/x64-windows/include/qt5/QtWidgets/",
-  ],
-
   "Lua.diagnostics.globals": [ "vim" ],
   "diagnostic.errorSign": "",
   "diagnostic.warningSign": "",
