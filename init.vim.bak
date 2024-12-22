@@ -327,4 +327,4 @@ let g:vimspector_enable_mappings = 'VISUAL_STUDIO'
 let g:EasyMotion_do_mapping = 0
 let g:EasyMotion_smartcase = 1
 
-ru conf.lua
+ru lua/conf.lua
