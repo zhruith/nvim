@@ -513,7 +513,7 @@ require('nvim-tree').setup {
 ---------------- treesitter config ----------------
 
 require('nvim-treesitter.configs').setup {
-  ensure_installed = { 'rust', 'python', 'cpp', 'lua', 'toml', 'vim', 'vimdoc', 'javascript', 'typescript' },
+  ensure_installed = {},
   sync_install = true,
   auto_install = true,
   highlight = {
