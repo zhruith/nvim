@@ -173,6 +173,7 @@ nnoremap <silent><nowait> <space>l :<C-u>CocList<CR>
 nnoremap <silent><nowait> <space>g :<C-u>CocList grep<CR>
 nnoremap <silent><nowait> <space>w :<C-u>CocList words<CR>
 nnoremap <silent><nowait> <space>r :<C-u>CocList mru<CR>
+nnoremap <silent><nowait> <space>o :<C-u>CocCommand session.load<CR>
 nnoremap <silent><nowait> <space>v :<C-u>CocList vimcommands<CR>
 
 
@@ -182,7 +183,7 @@ map <silent> ) :<C-u>CocCommand document.jumpToPrevSymbol<cr>
 
 map <silent> gn :<C-u>bn<cr>
 map <silent> gp :<C-u>bp<cr>
-map <silent> gq :<C-u>bp\|bd#<cr>
+map <silent> gq :<C-u>bn\|bd#<cr>
 map <silent> gW :<C-w>q<cr>
 map <silent> gQ :<C-u>%bd!\|e#\|bd#<cr>
 map <silent> ga :<C-u>e#<cr>
@@ -196,7 +197,7 @@ map <silent> s <Plug>(easymotion-bd-w)
 map Sj <Plug>(easymotion-j)
 map Sk <Plug>(easymotion-k)
 
-map <silent> <M-h> :<C-u>Highlight<cr>
+noremap <silent> <M-h> :<C-u>Highlight<cr>
 
 
 vmap <silent> < <gv
@@ -238,20 +239,20 @@ tnoremap <c-q> <c-\><c-n>
 
 
 """"""""""""""" resize window """"""""""""""""""
-nmap <silent><c-m-h> :vertical resize -3<cr>
-nmap <silent><c-m-l> :vertical resize +2<cr>
-nmap <silent><c-m-j> :resize -2<cr>
-nmap <silent><c-m-k> :resize +2<cr>
+nmap <silent><s-m-h> :vertical resize -2<cr>
+nmap <silent><s-m-l> :vertical resize +2<cr>
+nmap <silent><s-m-j> :resize -2<cr>
+nmap <silent><s-m-k> :resize +2<cr>
 
-inoremap <silent><c-m-h> <c-\><c-n>:vertical resize -2<cr>a
-inoremap <silent><c-m-l> <c-\><c-n>:vertical resize +2<cr>a
-inoremap <silent><c-m-j> <c-\><c-n>:resize -2<cr>a
-inoremap <silent><c-m-k> <c-\><c-n>:resize +2<cr>a
+inoremap <silent><s-m-h> <c-\><c-n>:vertical resize -2<cr>a
+inoremap <silent><s-m-l> <c-\><c-n>:vertical resize +2<cr>a
+inoremap <silent><s-m-j> <c-\><c-n>:resize -2<cr>a
+inoremap <silent><s-m-k> <c-\><c-n>:resize +2<cr>a
 
-tnoremap <silent><c-m-h> <c-\><c-n>:vertical resize -2<cr>a
-tnoremap <silent><c-m-l> <c-\><c-n>:vertical resize +2<cr>a
-tnoremap <silent><c-m-j> <c-\><c-n>:resize -2<cr>a
-tnoremap <silent><c-m-k> <c-\><c-n>:resize +2<cr>a
+tnoremap <silent><s-m-h> <c-\><c-n>:vertical resize -2<cr>a
+tnoremap <silent><s-m-l> <c-\><c-n>:vertical resize +2<cr>a
+tnoremap <silent><s-m-j> <c-\><c-n>:resize -2<cr>a
+tnoremap <silent><s-m-k> <c-\><c-n>:resize +2<cr>a
 
 
 """""""""""""move line """""""""""""""""""
@@ -268,7 +269,7 @@ nnoremap <F2> :set hlsearch! <CR>
 
 "Edit config setting file by $MYVIMRC
 nnoremap <silent><nowait> <S-A-c> :e $MYVIMRC<CR>
-nnoremap <silent><nowait> <S-A-l> :call <SID>OpenLuaConf()<CR>
+nnoremap <silent><nowait> <S-A-o> :call <SID>OpenLuaConf()<CR>
 nnoremap <silent><nowait> <S-A-r> :<c-u>so$MYVIMRC\|colo ayu<cr>
 
 function! s:OpenLuaConf()
