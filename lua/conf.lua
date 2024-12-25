@@ -5,13 +5,15 @@ local use_icons = true
 -- :lua print(vim.inspect(require('ayu.colors')))
 local ayu = require 'ayu.colors'
 local lightBlue = "#273747"
-local gray = { fg = 'gray' }
+-- local gray = { fg = 'gray' }
 
 require('ayu').setup {
+  mirage = false,
+  terminal = false,
   overrides = function()
     return {
       -- Normal = { bg = "" },
-      -- NormalFloat = { bg = "black" },
+      NormalFloat = { bg = "black" },
       -- SignColumn = { bg = "" },
       -- WinSeparator = { fg = ayu.ui, bg = "" },
       -- Visual = { bg = ayu.selection_border },
@@ -49,13 +51,13 @@ require('gitsigns').setup {
       GitSignsChangeLn = "GitSignsChangeLn",
     },
     delete = {
-      text = icons.ui.Triangle,
+      text = icons.ui.LineMiddle,
       GitSignsDelete = "GitSignsDelete",
       GitSignsDeleteNr = "GitSignsDeleteNr",
       GitSignsDeleteLn = "GitSignsDeleteLn",
     },
     topdelete = {
-      text = icons.ui.Triangle,
+      text = icons.ui.LineMiddle,
       GitSignsDelete = "GitSignsDelete",
       numhlGitSignsDeleteNr = "GitSignsDeleteNr",
       linehlGitSignsDeleteLn = "GitSignsDeleteLn",

@@ -15,11 +15,11 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 -- Setup lazy.nvim
+vim.g.lazy_did_setup = false
 require("lazy").setup({
   spec = {
     { 'neoclide/coc.nvim', branch = "release" },
     'nvim-treesitter/nvim-treesitter',
-    -- 'puremourning/vimspector',
     'nvim-tree/nvim-tree.lua',
     'nvim-lualine/lualine.nvim',
     'nvim-tree/nvim-web-devicons',
@@ -28,6 +28,7 @@ require("lazy").setup({
     'shatur/neovim-ayu',
     'lewis6991/gitsigns.nvim',
     'easymotion/vim-easymotion',
+    -- 'puremourning/vimspector',
   },
   -- Configure any other settings here. See the documentation for more details.
   -- colorscheme that will be used when installing plugins.
@@ -93,8 +94,8 @@ keyset("i", "<c-j>", "<Plug>(coc-snippets-expand-jump)")
 keyset("i", "<c-space>", "coc#refresh()", { silent = true, expr = true })
 -- Use `[g` and `]g` to navigate diagnostics
 -- Use `:CocDiagnostics` to get all diagnostics of current buffer in location list
-keyset("n", "[d", "<Plug>(coc-diagnostic-prev)", silent)
-keyset("n", "]d", "<Plug>(coc-diagnostic-next)", silent)
+keyset("n", "[d", "<Plug>(coc-diagnostic-next)", silent)
+keyset("n", "]d", "<Plug>(coc-diagnostic-prev)", silent)
 -- GoTo code navigation
 keyset("n", "gd", "<Plug>(coc-definition)", silent)
 keyset("n", "gy", "<Plug>(coc-type-definition)", silent)
@@ -188,30 +189,33 @@ vim.opt.statusline:prepend("%{coc#status()}%{get(b:,'coc_current_function','')}"
 -- code actions and coc stuff
 ---@diagnostic disable-next-line: redefined-local
 local opts = { silent = true, nowait = true }
-keyset("n", "<space>d", ":<C-u>CocList diagnostics<cr>", opts)
-keyset("n", "<space>x", ":<C-u>CocList extensions<cr>", opts)
-keyset("n", "<space>c", ":<C-u>CocList commands<cr>", opts)
-keyset("n", "<space>o", ":<C-u>CocCommand session.load<cr>", opts)
-keyset("n", "<space>s", ":<C-u>CocList outline<cr>", opts)
-keyset("n", "<space>S", ":<C-u>CocList -I symbols<cr>", opts)
-keyset("n", "<space>j", ":<C-u>CocNext<cr>", opts)
-keyset("n", "<space>k", ":<C-u>CocPrev<cr>", opts)
-keyset("n", "<space>p", ":<C-u>CocListResume<cr>", opts)
-keyset("n", "<space>m", ":<C-u>CocList marketplace<cr>", opts)
-keyset("n", "<space>b", ":<C-u>CocList buffers<cr>", opts)
-keyset("n", "<space>e", ":<C-u>NvimTreeToggle<cr>", opts)
-keyset("n", "<space>f", ":<C-u>CocList files<cr>", opts)
-keyset("n", "<space>l", ":<C-u>CocList<cr>", opts)
-keyset("n", "<space>g", ":<C-u>CocList grep<cr>", opts)
-keyset("n", "<space>w", ":<C-u>CocList words<cr>", opts)
-keyset("n", "<space>r", ":<C-u>CocList mru<cr>", opts)
-keyset("n", "<space>v", ":<C-u>CocList vimcommands<cr>", opts)
+keyset("n", "<space>d", ":CocList diagnostics<cr>", opts)
+keyset("n", "<space>x", ":CocList extensions<cr>", opts)
+keyset("n", "<space>c", ":CocList commands<cr>", opts)
+keyset("n", "<space>o", ":CocCommand session.load<cr>", opts)
+keyset("n", "<space>s", ":CocList outline<cr>", opts)
+keyset("n", "<space>S", ":CocList -I symbols<cr>", opts)
+keyset("n", "<space>j", ":CocNext<cr>", opts)
+keyset("n", "<space>k", ":CocPrev<cr>", opts)
+keyset("n", "<space>p", ":CocListResume<cr>", opts)
+keyset("n", "<space>m", ":CocList marketplace<cr>", opts)
+keyset("n", "<space>b", ":CocList buffers<cr>", opts)
+keyset("n", "<space>e", ":NvimTreeToggle<cr>", opts)
+keyset("n", "<space>f", ":CocList files<cr>", opts)
+keyset("n", "<space>l", ":CocList<cr>", opts)
+keyset("n", "<space>g", ":CocList grep<cr>", opts)
+keyset("n", "<space>w", ":CocList words<cr>", opts)
+keyset("n", "<space>r", ":CocList mru<cr>", opts)
+keyset("n", "<space>v", ":CocList vimcommands<cr>", opts)
+keyset("n", "<space>U", ":CocUpdate<cr>", opts)
+keyset("n", "<space>L", ":Lazy<cr>", opts)
 -- g keyshot
-keyset("n", "gn", ":<C-u>bn<cr>", opts)
-keyset("n", "gp", ":<C-u>bp<cr>", opts)
-keyset("n", "gq", ":<C-u>bn|bd#<cr>", opts)
-keyset("n", "gQ", ":<C-u>%bd!|e#|bd#<cr>", opts)
-keyset("n", "ga", ":<C-u>e#<cr>", opts)
+
+keyset("n", "gn", ":bn<cr>", opts)
+keyset("n", "gp", ":bp<cr>", opts)
+keyset("n", "gq", ":bd%<cr>", opts)
+keyset("n", "gQ", ":%bd!|e#|bd#<cr>", opts)
+keyset("n", "ga", ":e#<cr>", opts)
 keyset("n", "gw", "<Plug>(coc-float-jump)", opts)
 keyset("n", "gh", "0", opts)
 keyset("n", "gs", "^", opts)
@@ -220,16 +224,16 @@ keyset("n", "gc", "M", opts)
 keyset("n", "ge", "G", opts)
 -- misc keyshot
 keyset("n", "s", "<Plug>(easymotion-bd-w)", opts)
-keyset("n", "<S-A-f>", ":<C-u>CocCommand editor.action.formatDocument<cr>", opts)
+keyset("n", "<S-A-f>", ":CocCommand editor.action.formatDocument<cr>", opts)
 keyset("n", "<S-A-c>", ":e $MYVIMRC<cr>", opts)
-keyset("n", "<S-A-r>", ":<c-u>so$MYVIMRC<cr>", opts)
+keyset("n", "<S-A-r>", ":luafile %<cr>", opts)
 keyset("n", "<C-s>", ":w<cr>", silent)
 keyset("v", "<C-s>", ":w<cr>", silent)
 keyset("i", "<C-s>", "<Esc>:w<cr>", silent)
 vim.api.nvim_create_user_command("Highlight", "call CocActionAsync('highlight')", {})
-keyset("n", "<M-h>", ":<C-u>Highlight<cr>", opts)
-keyset("n", "(", ":<C-u>CocCommand document.jumpToNextSymbol<cr>")
-keyset("n", ")", ":<C-u>CocCommand document.jumpToPrevSymbol<cr>")
+keyset("n", "<M-h>", ":Highlight<cr>", opts)
+keyset("n", "(", ":CocCommand document.jumpToNextSymbol<cr>", opts)
+keyset("n", ")", ":CocCommand document.jumpToPrevSymbol<cr>", opts)
 -- moving cursor
 keyset("n", "<C-h>", "<C-w>h")
 keyset("n", "<C-l>", "<C-w>l")
@@ -246,31 +250,65 @@ keyset("t", "<C-k>", "<C-\\><C-n><C-w>k")
 keyset("t", "<C-v>", '<C-\\><C-n>"0pa')
 keyset("t", "<C-q>", "<C-\\><C-n>")
 -- moving lines
-keyset("n", "<M-j>", ":m .+1<cr>")
-keyset("n", "<M-k>", ":m .-2<cr>")
-keyset("i", "<M-j>", "<Esc>:m .+1<cr>a")
-keyset("i", "<M-k>", "<Esc>:m .-2<cr>a")
-keyset("v", "<M-j>", ":m '>+1<cr>gv-gv")
-keyset("v", "<M-k>", ":m '<-2<cr>gv-gv")
-keyset("v", "<", "<gv")
-keyset("v", ">", ">gv")
+keyset("n", "<M-j>", ":m .+1<cr>", opts)
+keyset("n", "<M-k>", ":m .-2<cr>", opts)
+keyset("i", "<M-j>", "<Esc>:m .+1<cr>a", opts)
+keyset("i", "<M-k>", "<Esc>:m .-2<cr>a", opts)
+keyset("v", "<M-j>", ":m '>+1<cr>gv-gv", opts)
+keyset("v", "<M-k>", ":m '<-2<cr>gv-gv", opts)
+keyset("v", "<", "<gv", opts)
+keyset("v", ">", ">gv", opts)
 -- resize window
-keyset("n", "<S-M-h>", ":vertical resize -2<cr>")
-keyset("n", "<S-M-l>", ":vertical resize +2<cr>")
-keyset("n", "<S-M-j>", ":resize -2<cr>")
-keyset("n", "<S-M-k>", ":resize +2<cr>")
-keyset("i", "<S-M-h>", "<C-\\><C-n>:vertical resize -2<cr>a")
-keyset("i", "<S-M-l>", "<C-\\><C-n>:vertical resize +2<cr>a")
-keyset("i", "<S-M-j>", "<C-\\><C-n>:resize -2<cr>a")
-keyset("i", "<S-M-k>", "<C-\\><C-n>:resize +2<cr>a")
-keyset("t", "<S-M-h>", "<C-\\><C-n>:vertical resize -2<cr>a")
-keyset("t", "<S-M-l>", "<C-\\><C-n>:vertical resize +2<cr>a")
-keyset("t", "<S-M-j>", "<C-\\><C-n>:resize -2<cr>a")
-keyset("t", "<S-M-k>", "<C-\\><C-n>:resize +2<cr>a")
+keyset("n", "<S-M-h>", ":vertical resize -2<cr>", opts)
+keyset("n", "<S-M-l>", ":vertical resize +2<cr>", opts)
+keyset("n", "<S-M-j>", ":resize -2<cr>", opts)
+keyset("n", "<S-M-k>", ":resize +2<cr>", opts)
+keyset("i", "<S-M-h>", "<C-\\><C-n>:vertical resize -2<cr>a", opts)
+keyset("i", "<S-M-l>", "<C-\\><C-n>:vertical resize +2<cr>a", opts)
+keyset("i", "<S-M-j>", "<C-\\><C-n>:resize -2<cr>a", opts)
+keyset("i", "<S-M-k>", "<C-\\><C-n>:resize +2<cr>a", opts)
+keyset("t", "<S-M-h>", "<C-\\><C-n>:vertical resize -2<cr>a", opts)
+keyset("t", "<S-M-l>", "<C-\\><C-n>:vertical resize +2<cr>a", opts)
+keyset("t", "<S-M-j>", "<C-\\><C-n>:resize -2<cr>a", opts)
+keyset("t", "<S-M-k>", "<C-\\><C-n>:resize +2<cr>a", opts)
+
+local function terminal_create(cmd)
+  vim.cmd(string.format('%s | terminal', cmd))
+  vim.cmd("startinsert")
+  local term_buf = vim.api.nvim_get_current_buf()
+  vim.api.nvim_set_option_value('buflisted', false, { buf = term_buf })
+  vim.api.nvim_create_autocmd("TermClose", {
+    buffer = term_buf,
+    callback = function() vim.cmd("bd" .. term_buf) end,
+  })
+  vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter", "BufWinEnter" }, {
+    buffer = term_buf,
+    callback = function() vim.cmd("startinsert") end
+  })
+end
+vim.api.nvim_create_autocmd({ "BufHidden" }, {
+  -- pattern = "term://*",
+  callback = function()
+    vim.schedule(function()
+      local buf = vim.api.nvim_get_current_buf()
+      if vim.api.nvim_buf_get_option(buf, 'buftype') == 'terminal' then
+        vim.cmd('startinsert')
+      end
+    end)
+  end
+})
+
+keyset("n", "<M-+>", function() terminal_create('vsplit | wincmd l') end, opts)
+keyset("n", "<M-_>", function() terminal_create('split | wincmd j') end, opts)
+keyset("i", "<M-+>", function() terminal_create('vsplit | wincmd l') end, opts)
+keyset("i", "<M-_>", function() terminal_create('split | wincmd j') end, opts)
+keyset("t", "<M-+>", function() terminal_create('vsplit | wincmd l') end, opts)
+keyset("t", "<M-_>", function() terminal_create('split | wincmd j') end, opts)
+
 -- set terminal
-vim.cmd('nnoremap <silent><M-1> <Cmd>exe v:count . "ToggleTerm direction=horizontal"<CR>')
-vim.cmd('nnoremap <silent><M-2> <Cmd>exe v:count . "ToggleTerm direction=vertical"<CR>')
-vim.cmd('nnoremap <silent><M-3> <Cmd>exe v:count . "ToggleTerm direction=float"<CR>')
+vim.cmd([[nnoremap <silent><M-1> <Cmd>exe v:count . "ToggleTerm direction=horizontal"<CR>]])
+vim.cmd([[nnoremap <silent><M-2> <Cmd>exe v:count . "ToggleTerm direction=vertical"<CR>]])
+vim.cmd([[nnoremap <silent><M-3> <Cmd>exe v:count . "ToggleTerm direction=float"<CR>]])
 vim.api.nvim_create_autocmd("TermEnter", {
   pattern = "term://*toggleterm#*",
   callback = function()
@@ -282,9 +320,7 @@ vim.api.nvim_create_autocmd("TermEnter", {
 vim.api.nvim_create_autocmd("FileType", {
   group = vim.api.nvim_create_augroup("JsonToJsonc", { clear = true }),
   pattern = "json",
-  callback = function()
-    vim.bo.filetype = "jsonc"
-  end,
+  callback = function() vim.bo.filetype = "jsonc" end,
 })
 -- auto set cursor to the last position
 vim.api.nvim_create_autocmd('BufReadPost', {
