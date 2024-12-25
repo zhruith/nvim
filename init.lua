@@ -40,7 +40,7 @@ require("lazy").setup({
 for key, value in pairs({
   backup = false,
   writebackup = false,
-  updatetime = 150,
+  updatetime = 100,
   signcolumn = "yes",
   hlsearch = false,
   scrolloff = 3,
@@ -103,17 +103,26 @@ keyset("n", "gi", "<Plug>(coc-implementation)", silent)
 keyset("n", "gr", "<Plug>(coc-references)", silent)
 -- Use K to show documentation in preview window
 function _G.show_docs()
-  local cw = vim.fn.expand('<cword>')
-  if vim.fn.index({ 'vim', 'help' }, vim.bo.filetype) >= 0 then
-    vim.api.nvim_command('h ' .. cw)
+  if vim.fn.index({ "vim", "lua", "help" }, vim.bo.filetype) >= 0 then
+    vim.fn.CocActionAsync('doHover')
   elseif vim.api.nvim_eval('coc#rpc#ready()') then
     vim.fn.CocActionAsync('doHover')
   else
-    vim.api.nvim_command('!' .. vim.o.keywordprg .. ' ' .. cw)
+    vim.api.nvim_command('!' .. vim.o.keywordprg .. ' ' .. vim.fn.expand('<cword>'))
+  end
+end
+
+function _G.show_help_docs()
+  if vim.fn.index({ "vim", "lua", "help" }, vim.bo.filetype) >= 0 then
+    if pcall(function() vim.api.nvim_command('h ' .. vim.fn.expand('<cword>')) end) then
+    else
+      vim.print('Not exists this help word: ' .. vim.fn.expand('<cword>'))
+    end
   end
 end
 
 keyset("n", "K", '<CMD>lua _G.show_docs()<CR>', silent)
+keyset("n", "<space>K", '<CMD>lua _G.show_help_docs()<CR>', silent)
 -- Highlight the symbol and its references on a CursorHold event(cursor is idle)
 vim.api.nvim_create_augroup("CocGroup", {})
 -- vim.api.nvim_create_autocmd("CursorHold", {
@@ -170,12 +179,12 @@ keyset("o", "ac", "<Plug>(coc-classobj-a)", opts)
 -- Remap <C-f> and <C-b> to scroll float windows/popups
 ---@diagnostic disable-next-line: redefined-local
 local opts = { silent = true, nowait = true, expr = true }
-keyset("n", "<C-d>", 'coc#float#has_scroll() ? coc#float#scroll(1) : "<C-d>"', opts)
-keyset("n", "<C-u>", 'coc#float#has_scroll() ? coc#float#scroll(0) : "<C-u>"', opts)
-keyset("i", "<C-d>", 'coc#float#has_scroll() ? "<c-r>=coc#float#scroll(1)<cr>" : "<Right>"', opts)
-keyset("i", "<C-u>", 'coc#float#has_scroll() ? "<c-r>=coc#float#scroll(0)<cr>" : "<Left>"', opts)
-keyset("v", "<C-d>", 'coc#float#has_scroll() ? coc#float#scroll(1) : "<C-d>"', opts)
-keyset("v", "<C-u>", 'coc#float#has_scroll() ? coc#float#scroll(0) : "<C-u>"', opts)
+keyset("n", "<C-d>", 'coc#float#has_float() ? coc#float#scroll(1) : "<C-d>"', opts)
+keyset("n", "<C-u>", 'coc#float#has_float() ? coc#float#scroll(0) : "<C-u>"', opts)
+keyset("i", "<C-d>", 'coc#float#has_float() ? "<c-r>=coc#float#scroll(1)<cr>" : "<Right>"', opts)
+keyset("i", "<C-u>", 'coc#float#has_float() ? "<c-r>=coc#float#scroll(0)<cr>" : "<Left>"', opts)
+keyset("v", "<C-d>", 'coc#float#has_float() ? coc#float#scroll(1) : "<C-d>"', opts)
+keyset("v", "<C-u>", 'coc#float#has_float() ? coc#float#scroll(0) : "<C-u>"', opts)
 -- Use CTRL-S for selections ranges
 -- Requires 'textDocument/selectionRange' support of language server
 vim.api.nvim_create_user_command("Format", "call CocAction('format')", {})
@@ -188,7 +197,7 @@ vim.opt.statusline:prepend("%{coc#status()}%{get(b:,'coc_current_function','')}"
 -- Mappings for CoCList
 -- code actions and coc stuff
 ---@diagnostic disable-next-line: redefined-local
-local opts = { silent = true, nowait = true }
+local opts = { silent = true, nowait = true, expr = false }
 keyset("n", "<space>d", ":CocList diagnostics<cr>", opts)
 keyset("n", "<space>x", ":CocList extensions<cr>", opts)
 keyset("n", "<space>c", ":CocList commands<cr>", opts)
@@ -217,9 +226,9 @@ keyset("n", "gq", ":bd%<cr>", opts)
 keyset("n", "gQ", ":%bd!|e#|bd#<cr>", opts)
 keyset("n", "ga", ":e#<cr>", opts)
 keyset("n", "gw", "<Plug>(coc-float-jump)", opts)
-keyset("n", "gh", "0", opts)
-keyset("n", "gs", "^", opts)
-keyset("n", "gl", "$", opts)
+keyset({ "n", "x" }, "gh", "0", opts)
+keyset({ "n", "x" }, "gs", "^", opts)
+keyset({ "n", "x" }, "gl", "$", opts)
 keyset("n", "gc", "M", opts)
 keyset("n", "ge", "G", opts)
 -- misc keyshot
@@ -227,28 +236,21 @@ keyset("n", "s", "<Plug>(easymotion-bd-w)", opts)
 keyset("n", "<S-A-f>", ":CocCommand editor.action.formatDocument<cr>", opts)
 keyset("n", "<S-A-c>", ":e $MYVIMRC<cr>", opts)
 keyset("n", "<S-A-r>", ":luafile %<cr>", opts)
-keyset("n", "<C-s>", ":w<cr>", silent)
-keyset("v", "<C-s>", ":w<cr>", silent)
-keyset("i", "<C-s>", "<Esc>:w<cr>", silent)
-vim.api.nvim_create_user_command("Highlight", "call CocActionAsync('highlight')", {})
-keyset("n", "<M-h>", ":Highlight<cr>", opts)
+keyset({ "n", "x", "i" }, "<C-s>", "<Esc>:w<cr>", silent)
+keyset("n", "<M-h>", function() vim.fn.CocActionAsync('highlight') end, opts)
 keyset("n", "(", ":CocCommand document.jumpToNextSymbol<cr>", opts)
 keyset("n", ")", ":CocCommand document.jumpToPrevSymbol<cr>", opts)
 -- moving cursor
-keyset("n", "<C-h>", "<C-w>h")
-keyset("n", "<C-l>", "<C-w>l")
-keyset("n", "<C-j>", "<C-w>j")
-keyset("n", "<C-k>", "<C-w>k")
-keyset("i", "<C-h>", "<C-\\><C-n><C-w>h")
-keyset("i", "<C-l>", "<C-\\><C-n><C-w>l")
-keyset("i", "<C-j>", "<C-\\><C-n><C-w>j")
-keyset("i", "<C-k>", "<C-\\><C-n><C-w>k")
-keyset("t", "<C-h>", "<C-\\><C-n><C-w>h")
-keyset("t", "<C-l>", "<C-\\><C-n><C-w>l")
-keyset("t", "<C-j>", "<C-\\><C-n><C-w>j")
-keyset("t", "<C-k>", "<C-\\><C-n><C-w>k")
-keyset("t", "<C-v>", '<C-\\><C-n>"0pa')
-keyset("t", "<C-q>", "<C-\\><C-n>")
+keyset("n", "<C-h>", "<C-w>h", opts)
+keyset("n", "<C-l>", "<C-w>l", opts)
+keyset("n", "<C-j>", "<C-w>j", opts)
+keyset("n", "<C-k>", "<C-w>k", opts)
+keyset({ "i", "t" }, "<C-h>", "<C-\\><C-n><C-w>h", opts)
+keyset({ "i", "t" }, "<C-l>", "<C-\\><C-n><C-w>l", opts)
+keyset({ "i", "t" }, "<C-j>", "<C-\\><C-n><C-w>j", opts)
+keyset({ "i", "t" }, "<C-k>", "<C-\\><C-n><C-w>k", opts)
+keyset("t", "<C-v>", '<C-\\><C-n>"0pa', opts)
+keyset("t", "<C-q>", "<C-\\><C-n>", opts)
 -- moving lines
 keyset("n", "<M-j>", ":m .+1<cr>", opts)
 keyset("n", "<M-k>", ":m .-2<cr>", opts)
@@ -263,14 +265,10 @@ keyset("n", "<S-M-h>", ":vertical resize -2<cr>", opts)
 keyset("n", "<S-M-l>", ":vertical resize +2<cr>", opts)
 keyset("n", "<S-M-j>", ":resize -2<cr>", opts)
 keyset("n", "<S-M-k>", ":resize +2<cr>", opts)
-keyset("i", "<S-M-h>", "<C-\\><C-n>:vertical resize -2<cr>a", opts)
-keyset("i", "<S-M-l>", "<C-\\><C-n>:vertical resize +2<cr>a", opts)
-keyset("i", "<S-M-j>", "<C-\\><C-n>:resize -2<cr>a", opts)
-keyset("i", "<S-M-k>", "<C-\\><C-n>:resize +2<cr>a", opts)
-keyset("t", "<S-M-h>", "<C-\\><C-n>:vertical resize -2<cr>a", opts)
-keyset("t", "<S-M-l>", "<C-\\><C-n>:vertical resize +2<cr>a", opts)
-keyset("t", "<S-M-j>", "<C-\\><C-n>:resize -2<cr>a", opts)
-keyset("t", "<S-M-k>", "<C-\\><C-n>:resize +2<cr>a", opts)
+keyset({ "i", "t" }, "<S-M-h>", "<C-\\><C-n>:vertical resize -2<cr>a", opts)
+keyset({ "i", "t" }, "<S-M-l>", "<C-\\><C-n>:vertical resize +2<cr>a", opts)
+keyset({ "i", "t" }, "<S-M-j>", "<C-\\><C-n>:resize -2<cr>a", opts)
+keyset({ "i", "t" }, "<S-M-k>", "<C-\\><C-n>:resize +2<cr>a", opts)
 
 local function terminal_create(cmd)
   vim.cmd(string.format('%s | terminal', cmd))
@@ -298,12 +296,8 @@ vim.api.nvim_create_autocmd({ "BufHidden" }, {
   end
 })
 
-keyset("n", "<M-+>", function() terminal_create('vsplit | wincmd l') end, opts)
-keyset("n", "<M-_>", function() terminal_create('split | wincmd j') end, opts)
-keyset("i", "<M-+>", function() terminal_create('vsplit | wincmd l') end, opts)
-keyset("i", "<M-_>", function() terminal_create('split | wincmd j') end, opts)
-keyset("t", "<M-+>", function() terminal_create('vsplit | wincmd l') end, opts)
-keyset("t", "<M-_>", function() terminal_create('split | wincmd j') end, opts)
+keyset({ "n", "i", "t" }, "<M-+>", function() terminal_create('vsplit | wincmd l') end, opts)
+keyset({ "n", "i", "t" }, "<M-_>", function() terminal_create('split | wincmd j') end, opts)
 
 -- set terminal
 vim.cmd([[nnoremap <silent><M-1> <Cmd>exe v:count . "ToggleTerm direction=horizontal"<CR>]])
