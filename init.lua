@@ -9,16 +9,20 @@ end
 vim.opt.rtp:prepend(lazypath)
 vim.g.lazy_did_setup = false
 require("lazy").setup({
+  install = { colorscheme = { "ayu" } },
+  checker = { enabled = false },
   spec = {
     { 'neoclide/coc.nvim', branch = "release" },
     {
       'shatur/neovim-ayu',
-      -- event = "VimEnter",
       config = function()
         require("ayu").setup {
           mirage = false, terminal = false,
           overrides = function()
-            return { NormalFloat = { bg = "black" }, CocHighlightText = { bg = "#273747" }, }
+            return {
+              NormalFloat = { bg = "black" },
+              CocHighlightText = { bg = "#273747" },
+            }
           end,
         }
         require("ayu").colorscheme()
@@ -29,6 +33,11 @@ require("lazy").setup({
       event = "BufReadPost",
       opts = {
         options = {
+          theme = function()
+            local theme = require('lualine.themes.auto')
+            -- theme.normal.c.bg = nil
+            return theme
+          end,
           globalstatus = true,
           component_separators = { left = "", right = "" },
           disabled_filetypes = { statusline = { 'list', '' }, winbar = {} },
@@ -99,14 +108,11 @@ require("lazy").setup({
     },
     {
       'lewis6991/gitsigns.nvim',
+      event = "BufReadPost",
       opts = {},
     },
     -- 'puremourning/vimspector',
   },
-  -- Configure any other settings here. See the documentation for more details.
-  -- colorscheme that will be used when installing plugins.
-  install = { colorscheme = { "ayu" } },
-  checker = { enabled = false },
 })
 -- global settings
 for key, value in pairs({
@@ -128,6 +134,7 @@ for key, value in pairs({
   tabstop = 2,
   shiftwidth = 2,
   softtabstop = 2,
+  laststatus = 0,
   wildmenu = true,
   wildmode = "list:longest,full",
   wildignore = "*.dll,*.exe,*.jpg,*.gif,*.png",
