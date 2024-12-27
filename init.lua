@@ -7,8 +7,8 @@ end
 
 -- Setup lazy.nvim
 vim.opt.rtp:prepend(lazypath)
-vim.g.lazy_did_setup = false
-require("lazy").setup({
+-- vim.g.lazy_did_setup = false
+require "lazy".setup {
   install = { colorscheme = { "ayu" } },
   checker = { enabled = false },
   spec = {
@@ -18,13 +18,7 @@ require("lazy").setup({
       config = function()
         require("ayu").setup {
           mirage = false, terminal = false,
-          overrides = function()
-            return {
-              NormalFloat = { bg = "black" },
-              CocHighlightText = { bg = "#273747" },
-            }
-          end,
-        }
+          overrides = { NormalFloat = { bg = "black" }, CocHighlightText = { bg = "#1B3A5B" }, } }
         require("ayu").colorscheme()
       end
     },
@@ -59,9 +53,7 @@ require("lazy").setup({
       opts = {
         persist_mode = false,
         persist_size = true,
-        winbar = {
-          enabled = false,
-        },
+        winbar = { enabled = false, },
         size = function(term)
           if term.direction == 'horizontal' then
             return 15
@@ -99,7 +91,9 @@ require("lazy").setup({
       'nvim-tree/nvim-tree.lua',
       dependencies = { 'nvim-tree/nvim-web-devicons' },
       keys = { { "<space>e", "<cmd>NvimTreeToggle<cr>", mode = { "n", "x" } } },
-      opts = {},
+      opts = {
+        update_focused_file = { enable = true, update_root = { enable = true } },
+      },
     },
     {
       'easymotion/vim-easymotion',
@@ -113,29 +107,29 @@ require("lazy").setup({
     },
     -- 'puremourning/vimspector',
   },
-})
+}
 -- global settings
 for key, value in pairs({
+  wrap = false,
   backup = false,
   writebackup = false,
-  updatetime = 100,
-  signcolumn = "yes",
   hlsearch = false,
-  scrolloff = 3,
   timeout = false,
   ignorecase = true,
   smartcase = true,
-  wrap = false,
   termguicolors = true,
-  foldmethod = "manual",
-  foldexpr = "",
   expandtab = true,
   smartindent = true,
+  wildmenu = true,
+  updatetime = 100,
+  scrolloff = 3,
   tabstop = 2,
   shiftwidth = 2,
   softtabstop = 2,
   laststatus = 0,
-  wildmenu = true,
+  signcolumn = "yes",
+  foldmethod = "manual",
+  foldexpr = "",
   wildmode = "list:longest,full",
   wildignore = "*.dll,*.exe,*.jpg,*.gif,*.png",
 }) do
@@ -287,7 +281,6 @@ keyset("n", "<space>b", ":CocList buffers<cr>", opts3)
 keyset("n", "<space>f", ":CocList files<cr>", opts3)
 keyset("n", "<space>l", ":CocList<cr>", opts3)
 keyset("n", "<space>g", ":CocList grep<cr>", opts3)
-keyset("n", "<space>w", ":CocList words<cr>", opts3)
 keyset("n", "<space>r", ":CocList mru<cr>", opts3)
 keyset("n", "<space>v", ":CocList vimcommands<cr>", opts3)
 keyset("n", "<space>U", ":CocUpdate<cr>", opts3)
@@ -306,6 +299,7 @@ keyset({ "n", "x" }, "gl", "$", opts3)
 keyset("n", "gc", "M", opts3)
 keyset("n", "ge", "G", opts3)
 -- misc keyshot
+keyset("n", "?", ":CocList words<cr>", opts3)
 keyset("n", "<Tab>", ":BufferLinePick<cr>", opts3)
 keyset("n", "<S-A-f>", ":CocCommand editor.action.formatDocument<cr>", opts3)
 keyset("n", "<S-A-c>", ":e $MYVIMRC<cr>", opts3)
