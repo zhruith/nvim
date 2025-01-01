@@ -92,7 +92,24 @@ require "lazy".setup {
       dependencies = { 'nvim-tree/nvim-web-devicons' },
       keys = { { "<space>e", "<cmd>NvimTreeToggle<cr>", mode = { "n", "x" } } },
       opts = {
-        update_focused_file = { enable = true, update_root = { enable = true } },
+        update_focused_file = { enable = true, update_root = true },
+        renderer = { highlight_git = true, root_folder_label = ":t" },
+        view = { preserve_window_proportions = true, },
+        diagnostics = { enable = true },
+        on_attach = function(bufnr)
+          local api = require "nvim-tree.api"
+          local function opts(desc)
+            return { desc = "nvim-tree: " .. desc, buffer = bufnr, }
+          end
+          api.config.mappings.default_on_attach(bufnr)
+          for k, v in pairs({
+            ["l"] = { api.node.open.edit, opts "Open" },
+            ["C"] = { api.tree.change_root_to_node, opts "CD" },
+            ["h"] = { api.node.navigate.parent_close, opts "Close Directory" },
+          }) do
+            vim.keymap.set('n', k, v[1], v[2])
+          end
+        end,
       },
     },
     {
