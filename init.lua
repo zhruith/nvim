@@ -13,17 +13,14 @@ require "lazy".setup {
   checker = { enabled = false },
   spec = {
     { 'neoclide/coc.nvim', branch = "release" },
-    {
-      'shatur/neovim-ayu',
+    { 'shatur/neovim-ayu',
       config = function()
         require("ayu").setup {
           mirage = false, terminal = false,
           overrides = { NormalFloat = { bg = "black" }, CocHighlightText = { bg = "#1B3A5B" }, } }
         require("ayu").colorscheme()
-      end
-    },
-    {
-      'nvim-lualine/lualine.nvim',
+      end },
+    { 'nvim-lualine/lualine.nvim',
       event = "BufReadPost",
       opts = {
         options = {
@@ -45,10 +42,8 @@ require "lazy".setup {
             'progress',
           },
         }
-      }
-    },
-    {
-      'akinsho/toggleterm.nvim',
+      } },
+    { 'akinsho/toggleterm.nvim',
       cmd = "ToggleTerm",
       opts = {
         persist_mode = false,
@@ -63,10 +58,8 @@ require "lazy".setup {
             return 20
           end
         end,
-      }
-    },
-    {
-      'nvim-treesitter/nvim-treesitter',
+      } },
+    { 'nvim-treesitter/nvim-treesitter',
       event = "BufReadPost",
       config = function()
         require('nvim-treesitter.configs').setup {
@@ -74,10 +67,8 @@ require "lazy".setup {
           sync_install = false, auto_install = true,
           highlight = { enable = true, additional_vim_regex_highlighting = true, },
         }
-      end,
-    },
-    {
-      'akinsho/bufferline.nvim',
+      end },
+    { 'akinsho/bufferline.nvim',
       event = "BufReadPost",
       dependencies = { 'nvim-tree/nvim-web-devicons' },
       opts = {
@@ -85,10 +76,8 @@ require "lazy".setup {
           always_show_bufferline = false,
           offsets = { { filetype = 'NvimTree' }, { filetype = 'netrw' } },
         },
-      },
-    },
-    {
-      'nvim-tree/nvim-tree.lua',
+      } },
+    { 'nvim-tree/nvim-tree.lua',
       dependencies = { 'nvim-tree/nvim-web-devicons' },
       keys = { { "<space>e", "<cmd>NvimTreeToggle<cr>", mode = { "n", "x" } } },
       opts = {
@@ -110,18 +99,20 @@ require "lazy".setup {
             vim.keymap.set('n', k, v[1], v[2])
           end
         end,
-      },
-    },
-    {
-      'easymotion/vim-easymotion',
+      } },
+    { 'easymotion/vim-easymotion',
       keys = { { "s", "<Plug>(easymotion-bd-w)", mode = "n" } },
       opts = { EasyMotion_do_mapping = 0, EasyMotion_smartcase = 1 }
     },
-    {
-      'lewis6991/gitsigns.nvim',
+    { 'lewis6991/gitsigns.nvim',
       event = "BufReadPost",
       opts = {},
     },
+    { "lukas-reineke/indent-blankline.nvim",
+      event = "BufReadPost",
+      main = "ibl",
+      opts = {},
+    }
     -- 'puremourning/vimspector',
   },
 }

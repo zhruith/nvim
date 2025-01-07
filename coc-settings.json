@@ -21,6 +21,12 @@
       "args": ["--lsp"],
       "trace.server": "verbose",
       "filetypes": ["nu"]
+    },
+
+    "glsl": {
+      "command": "glsl_analyzer",
+      "args": ["--stdio"],
+      "filetypes": ["glsl", "vert", "tesc", "tese", "geom", "frag", "comp"]
     }
   }
 }
