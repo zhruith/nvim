@@ -1,15 +1,8 @@
 {
   "inlayHint.display": false,
   "list.floatPreview": true,
+  "json.format.keepLines": true,
 
-  "rust-analyzer.server.path": "rust-analyzer",
-  "rust-analyzer.server.extraEnv": { "CARGO_TARGET_DIR": "target/analyzer" },
-  "rust-analyzer.check.extraArgs": [ "--target-dir=target/analyzer" ],
-
-  "pylsp.plugins.ruff.ignore": [ "F401", "F811" ],
-  "pylsp.plugins.ruff.lineLength": 120,
-
-  "Lua.diagnostics.globals": [ "vim" ],
   "diagnostic.errorSign": "",
   "diagnostic.warningSign": "",
   "diagnostic.infoSign": "",
@@ -18,15 +11,51 @@
   "languageserver": {
     "nu": {
       "command": "nu",
-      "args": ["--lsp"],
-      "trace.server": "verbose",
-      "filetypes": ["nu"]
+      "args": [ "--lsp" ],
+      "filetypes": [ "nu" ]
     },
-
+    "rust": {
+      "command": "rust-analyzer",
+      "filetypes": [ "rust" ],
+      "rootPatterns": [ "Cargo.toml", "cargo.lock" ],
+      "settings": {
+        "rust-analyzer.server.extraEnv": { "CARGO_TARGET_DIR": "target/analyzer" },
+        "rust-analyzer.check.extraArgs": [ "--target-dir=target/analyzer" ]
+      }
+    },
+    "pylsp": {
+      "command": "pylsp",
+      "filetypes": [ "python" ],
+      "rootPatterns": [ "pyproject.toml", "setup.py", "poetry.lock", "pyrightconfig.json" ],
+      "settings": {
+        "pylsp.plugins.ruff.lineLength": 120,
+        "pylsp.plugins.ruff.ignore": [ ]
+      }
+    },
+    "clangd": {
+      "command": "clangd",
+      "rootPatterns": [ "compile_flags.txt", "compile_commands.json" ],
+      "filetypes": [ "c", "cc", "cpp", "c++", "objc", "objcpp" ]
+    },
+    "lua": {
+      "command": "lua-language-server",
+      "filetypes": [ "lua" ],
+      "settings": { "Lua.diagnostics.globals": [ "vim" ] }
+    },
+    "typescript": {
+      "command": "typescript-language-server",
+      "args": [ "--stdio" ],
+      "filetypes": [ "javascript", "typescript" ]
+    },
+    "toml": {
+      "command": "taplo",
+      "args": [ "lsp", "stdio" ],
+      "filetypes": [ "toml" ]
+    },
     "glsl": {
       "command": "glsl_analyzer",
-      "args": ["--stdio"],
-      "filetypes": ["glsl", "vert", "tesc", "tese", "geom", "frag", "comp"]
+      "args": [ "--stdio" ],
+      "filetypes": [ "glsl", "vert", "tesc", "tese", "geom", "frag", "comp" ]
     }
   }
 }

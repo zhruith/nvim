@@ -409,25 +409,25 @@ vim.api.nvim_create_autocmd('BufReadPost', {
 })
 
 vim.g.coc_global_extensions = {
-  'coc-clangd',
   'coc-cmake',
   'coc-emmet',
   'coc-json',
   'coc-pairs',
-  'coc-rust-analyzer',
-  'coc-tsserver',
-  'coc-toml',
   'coc-marketplace',
   'coc-lists',
   'coc-vimlsp',
-  '@yaegassy/coc-pylsp',
   '@yaegassy/coc-volar',
   '@yaegassy/coc-volar-tools',
   'coc-css',
   'coc-html',
-  'coc-sumneko-lua',
   'coc-sh',
 }
+-- 'coc-toml',
+-- 'coc-clangd',
+-- 'coc-rust-analyzer',
+-- 'coc-tsserver',
+-- '@yaegassy/coc-pylsp',
+-- 'coc-sumneko-lua',
 
 -- Normal = { bg = "" },
 -- SignColumn = { bg = "" },
