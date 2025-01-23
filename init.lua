@@ -5,6 +5,9 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
   vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
 end
 
+
+vim.cmd('au BufNewFile,BufReadPost *.fs,*.vs set filetype=glsl')
+
 -- Setup lazy.nvim
 vim.opt.rtp:prepend(lazypath)
 -- vim.g.lazy_did_setup = false
@@ -104,10 +107,10 @@ require "lazy".setup {
       keys = { { "s", "<Plug>(easymotion-bd-w)", mode = "n" } },
       opts = { EasyMotion_do_mapping = 0, EasyMotion_smartcase = 1 }
     },
-    { 'lewis6991/gitsigns.nvim',
-      event = "BufReadPost",
-      opts = {},
-    },
+    -- { 'lewis6991/gitsigns.nvim',
+    --   cmd = "Gitsigns",
+    --   opts = {},
+    -- },
     { "lukas-reineke/indent-blankline.nvim",
       event = "BufReadPost",
       main = "ibl",
@@ -175,6 +178,7 @@ keyset("n", "[d", "<Plug>(coc-diagnostic-next)", silent)
 keyset("n", "]d", "<Plug>(coc-diagnostic-prev)", silent)
 -- GoTo code navigation
 keyset("n", "gd", "<Plug>(coc-definition)", silent)
+keyset("n", "gD", "<Plug>(coc-declaration)", silent)
 keyset("n", "gy", "<Plug>(coc-type-definition)", silent)
 keyset("n", "gi", "<Plug>(coc-implementation)", silent)
 keyset("n", "gr", "<Plug>(coc-references)", silent)
@@ -291,7 +295,6 @@ keyset("n", "<space>l", ":CocList<cr>", opts3)
 keyset("n", "<space>g", ":CocList grep<cr>", opts3)
 keyset("n", "<space>r", ":CocList mru<cr>", opts3)
 keyset("n", "<space>v", ":CocList vimcommands<cr>", opts3)
-keyset("n", "<space>U", ":CocUpdate<cr>", opts3)
 keyset("n", "<space>L", ":Lazy<cr>", opts3)
 
 -- g keyshot
@@ -387,11 +390,6 @@ vim.api.nvim_create_autocmd("TermEnter", {
     keyset("t", "<M-3>", string.format('<Cmd>exe %d . "ToggleTerm"<CR>', vim.v.count), opts3)
   end,
 })
-vim.api.nvim_create_autocmd("FileType", {
-  group = vim.api.nvim_create_augroup("JsonToJsonc", { clear = true }),
-  pattern = "json",
-  callback = function() vim.bo.filetype = "jsonc" end,
-})
 -- auto set cursor to the last position
 vim.api.nvim_create_autocmd('BufReadPost', {
   pattern = { '*' },
@@ -409,19 +407,14 @@ vim.api.nvim_create_autocmd('BufReadPost', {
 })
 
 vim.g.coc_global_extensions = {
-  'coc-cmake',
-  'coc-emmet',
+  'coc-git',
   'coc-json',
   'coc-pairs',
   'coc-marketplace',
   'coc-lists',
-  'coc-vimlsp',
-  '@yaegassy/coc-volar',
-  '@yaegassy/coc-volar-tools',
-  'coc-css',
-  'coc-html',
-  'coc-sh',
 }
+-- '@yaegassy/coc-volar',
+-- '@yaegassy/coc-volar-tools',
 -- 'coc-toml',
 -- 'coc-clangd',
 -- 'coc-rust-analyzer',

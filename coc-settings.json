@@ -20,7 +20,8 @@
       "rootPatterns": [ "Cargo.toml", "cargo.lock" ],
       "settings": {
         "rust-analyzer.server.extraEnv": { "CARGO_TARGET_DIR": "target/analyzer" },
-        "rust-analyzer.check.extraArgs": [ "--target-dir=target/analyzer" ]
+        "rust-analyzer.check.extraArgs": [ "--target-dir=target/analyzer" ],
+        "rust-analyzer.diagnostics.disabled": [ "inactive-code" ]
       }
     },
     "pylsp": {
@@ -51,6 +52,35 @@
       "command": "taplo",
       "args": [ "lsp", "stdio" ],
       "filetypes": [ "toml" ]
+    },
+    "html": {
+      "command": "vscode-html-language-server",
+      "args": [ "--stdio" ],
+      "filetypes": [ "html" ],
+      "initializationOptions": { "provideFormatter": true }
+    },
+    "css": {
+      "command": "vscode-css-language-server",
+      "args": [ "--stdio" ],
+      "filetypes": [ "css" ],
+      "initializationOptions": {
+        "provideFormatter": true,
+        "vue": { "hybridMode": false },
+        "css": { "validate": { "enable": true } }
+      }
+    },
+    "vue": {
+      "command": "vue-language-server",
+      "args": [ "--stdio" ],
+      "filetypes": [ "vue", "typescript", "javascript" ],
+      "rootPatterns": [ "package.json" ],
+      "initializationOptions": { "typescript": { "tsdk": "node_modules/typescript/lib/" } }
+    },
+    "cmake": {
+      "command": "cmake-language-server",
+      "filetypes": [ "cmake" ],
+      "rootPatterns": [ "build/" ],
+      "initializationOptions": { "buildDirectory": "build" }
     },
     "glsl": {
       "command": "glsl_analyzer",
