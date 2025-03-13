@@ -12,7 +12,7 @@
     "nu": {
       "command": "nu",
       "args": [ "--lsp" ],
-      "filetypes": [ "nu" ]
+      "filetypes": [ "nu", "nuon" ]
     },
     "rust": {
       "command": "rust-analyzer",
@@ -30,7 +30,7 @@
       "rootPatterns": [ "pyproject.toml", "setup.py", "poetry.lock", "pyrightconfig.json" ],
       "settings": {
         "pylsp.plugins.ruff.lineLength": 120,
-        "pylsp.plugins.ruff.ignore": [ ]
+        "pylsp.plugins.ruff.ignore": [ "402" ]
       }
     },
     "clangd": {
@@ -72,7 +72,7 @@
     "vue": {
       "command": "vue-language-server",
       "args": [ "--stdio" ],
-      "filetypes": [ "vue", "typescript", "javascript" ],
+      "filetypes": [ "vue" ],
       "rootPatterns": [ "package.json" ],
       "initializationOptions": { "typescript": { "tsdk": "node_modules/typescript/lib/" } }
     },

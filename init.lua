@@ -5,9 +5,6 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
   vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
 end
 
-
-vim.cmd('au BufNewFile,BufReadPost *.fs,*.vs set filetype=glsl')
-
 -- Setup lazy.nvim
 vim.opt.rtp:prepend(lazypath)
 -- vim.g.lazy_did_setup = false
@@ -27,23 +24,28 @@ require "lazy".setup {
       event = "BufReadPost",
       opts = {
         options = {
+          icons_enabled = false,
           theme = function()
             local theme = require('lualine.themes.auto')
-            -- theme.normal.c.bg = nil
+            theme.normal.c.bg = nil
             return theme
           end,
           globalstatus = true,
-          component_separators = { left = "", right = "" },
+          component_separators = "", -- { left = "", right = "" },
           disabled_filetypes = { statusline = { 'list', '' }, winbar = {} },
           section_separators = {},
         },
         sections = {
-          lualine_c = { 'filename', 'g:coc_status' },
-          lualine_y = {
-            { 'datetime', style = '%H:%M' },
-            { 'progress', fmt = function() return "%L" end, },
-            'progress',
+          lualine_a = {
+            { 'mode', fmt = function(str) return str:sub(1, 3) end }
           },
+          lualine_c = { 'filename', 'g:coc_status' },
+          lualine_x = {
+            { 'datetime', style = '%H:%M' },
+          },
+          lualine_y = { 'fileformat', 'filetype',
+            { 'progress', fmt = function() return "%L" end, },
+            'progress' },
         }
       } },
     { 'akinsho/toggleterm.nvim',
@@ -73,15 +75,16 @@ require "lazy".setup {
       end },
     { 'akinsho/bufferline.nvim',
       event = "BufReadPost",
-      dependencies = { 'nvim-tree/nvim-web-devicons' },
+      -- dependencies = { 'nvim-tree/nvim-web-devicons' },
       opts = {
         options = {
           always_show_bufferline = false,
+          show_buffer_close_icons = false,
           offsets = { { filetype = 'NvimTree' }, { filetype = 'netrw' } },
         },
       } },
     { 'nvim-tree/nvim-tree.lua',
-      dependencies = { 'nvim-tree/nvim-web-devicons' },
+      -- dependencies = { 'nvim-tree/nvim-web-devicons' },
       keys = { { "<space>e", "<cmd>NvimTreeToggle<cr>", mode = { "n", "x" } } },
       opts = {
         update_focused_file = { enable = true, update_root = true },
@@ -104,7 +107,7 @@ require "lazy".setup {
         end,
       } },
     { 'easymotion/vim-easymotion',
-      keys = { { "s", "<Plug>(easymotion-bd-w)", mode = "n" } },
+      keys = { { "s", "<Plug>(easymotion-overwin-w)", mode = "n" } },
       opts = { EasyMotion_do_mapping = 0, EasyMotion_smartcase = 1 }
     },
     -- { 'lewis6991/gitsigns.nvim',
@@ -152,6 +155,9 @@ vim.cmd('set fillchars+=eob:\\ ')
 vim.cmd('set shell=nu')
 vim.o.shellcmdflag = '-c '
 vim.cmd('set shellxquote= shellxquote=')
+
+vim.cmd('au BufNewFile,BufReadPost *.fs,*.vs set filetype=glsl')
+vim.cmd('au BufNewFile,BufReadPost *.json set filetype=jsonc')
 
 -- coc.nvim default settings
 local keyset = vim.keymap.set
