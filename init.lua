@@ -41,7 +41,7 @@ require "lazy".setup {
           },
           lualine_c = { 'filename', 'g:coc_status' },
           lualine_x = {
-            { 'datetime', style = '%H:%M' },
+            { 'datetime', style = '%H:%M:%S' },
           },
           lualine_y = { 'fileformat', 'filetype',
             { 'progress', fmt = function() return "%L" end, },
@@ -317,7 +317,7 @@ keyset("n", "gc", "M", opts3)
 keyset("n", "ge", "G", opts3)
 -- misc keyshot
 keyset("n", "?", ":CocList words<cr>", opts3)
-keyset("n", "<Tab>", ":BufferLinePick<cr>", opts3)
+keyset("n", "t", ":BufferLinePick<cr>", opts3)
 keyset("n", "<S-A-f>", ":CocCommand editor.action.formatDocument<cr>", opts3)
 keyset("n", "<S-A-c>", ":e $MYVIMRC<cr>", opts3)
 keyset("n", "<S-A-r>", ":luafile %<cr>", opts3)

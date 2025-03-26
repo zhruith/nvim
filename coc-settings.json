@@ -30,7 +30,7 @@
       "rootPatterns": [ "pyproject.toml", "setup.py", "poetry.lock", "pyrightconfig.json" ],
       "settings": {
         "pylsp.plugins.ruff.lineLength": 120,
-        "pylsp.plugins.ruff.ignore": [ "402" ]
+        "pylsp.plugins.ruff.ignore": [ "E401" ]
       }
     },
     "clangd": {
@@ -46,7 +46,19 @@
     "typescript": {
       "command": "typescript-language-server",
       "args": [ "--stdio" ],
-      "filetypes": [ "javascript", "typescript" ]
+      "filetypes": [ "javascript", "typescript", "vue", "astro" ],
+      "initializationOptions": {
+        "plugins": [ {
+            "name": "@vue/typescript-plugin",
+            "location": "U:/scoop/.npm-global/node_modules/@vue/typescript-plugin",
+            "languages": [ "vue" ] }
+        ] }
+    },
+    "astro": {
+      "command": "astro-ls",
+      "args": [ "--stdio" ],
+      "filetypes": [ "astro" ],
+      "initializationOptions": { "typescript": { "tsdk": "node_modules/typescript/lib" } }
     },
     "toml": {
       "command": "taplo",
@@ -74,7 +86,7 @@
       "args": [ "--stdio" ],
       "filetypes": [ "vue" ],
       "rootPatterns": [ "package.json" ],
-      "initializationOptions": { "typescript": { "tsdk": "node_modules/typescript/lib/" } }
+      "initializationOptions": { "typescript": { "tsdk": "node_modules/typescript/lib" } }
     },
     "cmake": {
       "command": "cmake-language-server",
