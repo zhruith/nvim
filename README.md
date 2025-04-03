@@ -1,5 +1,5 @@
-# coc-nvim-conf
+# nvim
 
-Private configurations git respository.
+Private configuration respository for neovim.
 
-Use it by yourself no copyright.
+Feel free to use it.

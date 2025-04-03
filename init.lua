@@ -12,6 +12,7 @@ require "lazy".setup {
   install = { colorscheme = { "ayu" } },
   checker = { enabled = false },
   spec = {
+    { "neovim/nvim-lspconfig" },
     { 'shatur/neovim-ayu',
       config = function()
         local nobg = { bg = '' }
@@ -42,10 +43,7 @@ require "lazy".setup {
           lualine_a = {
             { 'mode', fmt = function(str) return str:sub(1, 3) end }
           },
-          lualine_c = {
-            function() return require('auto-session.lib').current_session_name(true) end,
-            'filename',
-          },
+          lualine_c = { 'filename', 'lsp_status' },
           lualine_x = { { 'datetime', style = '%H:%M:%S' }, },
           lualine_y = { 'fileformat', 'filetype',
             { 'progress', fmt = function() return "%L" end, },
@@ -110,7 +108,7 @@ require "lazy".setup {
           end
         end } },
     { 'easymotion/vim-easymotion',
-      keys = { { "<space>s", "<Plug>(easymotion-overwin-w)", mode = "n" } },
+      keys = { { "s", "<Plug>(easymotion-overwin-w)", mode = "n" } },
       opts = { EasyMotion_do_mapping = 0, EasyMotion_smartcase = 1 }
     },
     { 'lewis6991/gitsigns.nvim',
@@ -147,12 +145,10 @@ require "lazy".setup {
         auto_create = false,
         root_dir = "~/vimfiles/sessions/",
       }
-    }
-    -- 'puremourning/vimspector',
+    },
   },
 }
-
--- global settings
+-- global settings --------------------------------------------------------
 for key, value in pairs({
   wrap = false,
   backup = false,
@@ -189,32 +185,118 @@ vim.cmd('set shellxquote= shellxquote=')
 vim.cmd('au BufNewFile,BufReadPost *.fs,*.vs set filetype=glsl')
 vim.cmd('au BufNewFile,BufReadPost *.json set filetype=jsonc')
 
--- default settings
+------ nvim-lspconfig----------------------------------------------------------------------------
+local lspconfig = require 'lspconfig'
+for _, item in pairs({ 'volar', 'clangd', 'nushell', 'astro', 'html', 'jsonls', 'cssls', 'taplo',
+  'cmake', 'glsl_analyzer' }) do
+  lspconfig[item].setup {}
+end
+
+lspconfig.lua_ls.setup {
+  settings = { Lua = {} },
+  on_init = function(client)
+    client.config.settings.Lua = vim.tbl_deep_extend('force', client.config.settings.Lua, {
+      runtime = { version = 'LuaJIT' },
+      workspace = { checkThirdParty = false, library = { vim.env.VIMRUNTIME, "${3rd}/luv/library" } },
+    })
+  end
+}
+lspconfig.rust_analyzer.setup {
+  settings = {
+    ['rust-analyzer'] = {
+      server = { extraEnv = { CARGO_TARGET_DIR = "target/analyzer" } },
+      check = { extraArgs = { '--target-dir=target/analzyer' } },
+      diagnostics = { disabled = { 'inactive-code' } }
+    }
+  }
+}
+lspconfig.ts_ls.setup {
+  filetypes = { "javascript", "typescript", "vue" },
+  init_options = {
+    plugins = { {
+      name = "@vue/typescript-plugin",
+      location = "U:/scoop/.npm-global/node_modules/@vue/typescript-plugin",
+      languages = { "javascript", "typescript", "vue" },
+    } },
+  }
+}
+lspconfig.pylsp.setup {
+  settings = { pylsp = { plugins = { ruff = {
+    lineLength = 120,
+    ignore = { 'E401' },
+  } } } }
+}
+-- Enable (broadcasting) snippet capability for completion
+-- local capabilities = vim.lsp.protocol.make_client_capabilities()
+-- capabilities.textDocument.completion.completionItem.snippetSupport = true
+--
+-- vim.lsp.config("*", { capabilities = capabilities })
+vim.diagnostic.config({
+  virtual_text = { current_lines = true },
+  underline = true,
+  update_in_insert = false,
+  serverity_sort = true,
+  float = { border = "rounded" }
+})
+---------------- default settings -------------------------------------------
+local function terminal_create(cmd)
+  vim.cmd(string.format('%s | terminal', cmd))
+  vim.cmd("startinsert")
+  local term_buf = vim.api.nvim_get_current_buf()
+  vim.api.nvim_set_option_value('buflisted', false, { buf = term_buf })
+  vim.api.nvim_create_autocmd("TermClose", {
+    buffer = term_buf,
+    callback = function() vim.cmd("bd" .. term_buf) end,
+  })
+  vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter", "BufWinEnter" }, {
+    buffer = term_buf,
+    callback = function() vim.cmd("startinsert") end
+  })
+end
+vim.api.nvim_create_autocmd({ "BufHidden" }, {
+  -- pattern = "term://*",
+  callback = function()
+    vim.schedule(function()
+      local buftype = vim.api.nvim_get_option_value('buftype', { buf = vim.api.nvim_get_current_buf() })
+      if buftype == 'terminal' then vim.cmd('startinsert') end
+    end)
+  end
+})
+----------------- auto set cursor to the last position -----------------------------
+vim.api.nvim_create_autocmd('BufReadPost', {
+  pattern = { '*' },
+  desc = 'When editing a file, always jump to the last known cursor position',
+  callback = function()
+    local line = vim.fn.line '\'"'
+    if line >= 1
+        and line <= vim.fn.line '$'
+        and vim.bo.filetype ~= 'commit'
+        and vim.fn.index({ 'xxd', 'gitrebase' }, vim.bo.filetype) == -1
+    then
+      vim.cmd 'normal! g`"'
+    end
+  end,
+})
+------------------ key maps -------------------------------------------------------
 local keyset = vim.keymap.set
-local silent = { silent = true }
-
-
 local builtin = require('telescope.builtin')
-vim.keymap.set('n', '<space>c', builtin.commands, { desc = '' })
-vim.keymap.set('n', '<space>b', builtin.buffers, { desc = '' })
-vim.keymap.set('n', '<space>r', builtin.oldfiles, { desc = '' })
-vim.keymap.set('n', '<space>?', builtin.search_history, { desc = '' })
+keyset({ 'n', 'v' }, '<space>c', builtin.commands, { desc = '' })
+keyset({ 'n', 'v' }, '<space>r', builtin.oldfiles, { desc = '' })
+keyset({ 'n', 'v' }, '<space>?', builtin.search_history, { desc = '' })
 
-vim.keymap.set('n', '<space>f', builtin.find_files, { desc = 'Telescope find files' })
-vim.keymap.set('n', '<space>g', builtin.live_grep, { desc = 'Telescope live grep' })
-vim.keymap.set('n', '<space>b', builtin.buffers, { desc = 'Telescope buffers' })
-vim.keymap.set('n', '<space>h', builtin.help_tags, { desc = 'Telescope help tags' })
+keyset({ 'n', 'v' }, '<space>f', builtin.find_files, { desc = 'Telescope find files' })
+keyset({ 'n', 'v' }, '<space>g', builtin.live_grep, { desc = 'Telescope live grep' })
+keyset({ 'n', 'v' }, '<space>b', builtin.buffers, { desc = 'Telescope buffers' })
+keyset({ 'n', 'v' }, '<space>h', builtin.help_tags, { desc = 'Telescope help tags' })
 
-vim.keymap.set('n', 'gr', builtin.lsp_references, { desc = '' })
-vim.keymap.set('n', 'gi', builtin.lsp_implementations, { desc = '' })
-vim.keymap.set('n', '<space>ls', builtin.lsp_document_symbols, { desc = '' })
-vim.keymap.set('n', '<space>lS', builtin.lsp_workspace_symbols, { desc = '' })
-vim.keymap.set('n', '<space>li', builtin.lsp_incoming_calls, { desc = '' })
-vim.keymap.set('n', '<space>lo', builtin.lsp_outgoing_calls, { desc = '' })
-vim.keymap.set('n', '<space>ld', builtin.diagnostics, { desc = '' })
+keyset({ 'n', 'v' }, '<space>s', builtin.lsp_document_symbols, { desc = '' })
+keyset({ 'n', 'v' }, '<space>S', builtin.lsp_workspace_symbols, { desc = '' })
+keyset({ 'n', 'v' }, '<space>d', builtin.diagnostics, { desc = '' })
 
 local opts = { silent = true, nowait = true, expr = false }
 -- g keyshot
+keyset('n', 'gr', builtin.lsp_references, { desc = '' })
+keyset('n', 'gi', builtin.lsp_implementations, { desc = '' })
 keyset("n", "gn", ":bn<cr>", opts)
 keyset("n", "gp", ":bp<cr>", opts)
 keyset("n", "gq", ":bd%<cr>", opts)
@@ -229,7 +311,7 @@ keyset("n", "ge", "G", opts)
 keyset("n", "t", ":BufferLinePick<cr>", opts)
 keyset("n", "<S-A-c>", ":e $MYVIMRC<cr>", opts)
 keyset("n", "<S-A-r>", ":luafile %<cr>", opts)
-keyset({ "n", "x", "i" }, "<C-s>", "<Esc>:w<cr>", silent)
+keyset({ "n", "x", "i" }, "<C-s>", "<Esc>:w<cr>", opts)
 -- moving cursor
 keyset({ "n", "i", "t" }, "<C-S-h>", "<C-\\><C-n><C-w>h", opts)
 keyset({ "n", "i", "t" }, "<C-S-l>", "<C-\\><C-n><C-w>l", opts)
@@ -251,37 +333,10 @@ keyset({ "n", "i", "t" }, "<S-M-h>", "<C-\\><C-n>:vertical resize -2<cr>a", opts
 keyset({ "n", "i", "t" }, "<S-M-l>", "<C-\\><C-n>:vertical resize +2<cr>a", opts)
 keyset({ "n", "i", "t" }, "<S-M-j>", "<C-\\><C-n>:resize -2<cr>a", opts)
 keyset({ "n", "i", "t" }, "<S-M-k>", "<C-\\><C-n>:resize +2<cr>a", opts)
-
-local function terminal_create(cmd)
-  vim.cmd(string.format('%s | terminal', cmd))
-  vim.cmd("startinsert")
-  local term_buf = vim.api.nvim_get_current_buf()
-  vim.api.nvim_set_option_value('buflisted', false, { buf = term_buf })
-  vim.api.nvim_create_autocmd("TermClose", {
-    buffer = term_buf,
-    callback = function() vim.cmd("bd" .. term_buf) end,
-  })
-  vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter", "BufWinEnter" }, {
-    buffer = term_buf,
-    callback = function() vim.cmd("startinsert") end
-  })
-end
-vim.api.nvim_create_autocmd({ "BufHidden" }, {
-  -- pattern = "term://*",
-  callback = function()
-    vim.schedule(function()
-      local buf = vim.api.nvim_get_current_buf()
-      if vim.api.nvim_buf_get_option(buf, 'buftype') == 'terminal' then
-        vim.cmd('startinsert')
-      end
-    end)
-  end
-})
-
+-- set terminal
 keyset({ "n", "i", "t" }, "<M-+>", function() terminal_create('vsplit | wincmd l') end, opts)
 keyset({ "n", "i", "t" }, "<M-_>", function() terminal_create('split | wincmd j') end, opts)
 
--- set terminal
 vim.cmd([[nnoremap <silent><M-1> <Cmd>exe v:count . "ToggleTerm direction=horizontal"<CR>]])
 vim.cmd([[nnoremap <silent><M-2> <Cmd>exe v:count . "ToggleTerm direction=vertical"<CR>]])
 vim.cmd([[nnoremap <silent><M-3> <Cmd>exe v:count . "ToggleTerm direction=float"<CR>]])
@@ -291,24 +346,8 @@ vim.api.nvim_create_autocmd("TermEnter", {
     keyset("t", "<M-1>", string.format('<Cmd>exe %d . "ToggleTerm"<CR>', vim.v.count), opts)
     keyset("t", "<M-2>", string.format('<Cmd>exe %d . "ToggleTerm"<CR>', vim.v.count), opts)
     keyset("t", "<M-3>", string.format('<Cmd>exe %d . "ToggleTerm"<CR>', vim.v.count), opts)
-  end,
+  end
 })
--- auto set cursor to the last position
-vim.api.nvim_create_autocmd('BufReadPost', {
-  pattern = { '*' },
-  desc = 'When editing a file, always jump to the last known cursor position',
-  callback = function()
-    local line = vim.fn.line '\'"'
-    if line >= 1
-        and line <= vim.fn.line '$'
-        and vim.bo.filetype ~= 'commit'
-        and vim.fn.index({ 'xxd', 'gitrebase' }, vim.bo.filetype) == -1
-    then
-      vim.cmd 'normal! g`"'
-    end
-  end,
-})
-
 keyset({ 'n', 'v' }, "gd", vim.lsp.buf.definition, opts)
 keyset({ 'n', 'v' }, "gD", vim.lsp.buf.declaration, opts)
 keyset({ 'n', 'v' }, "gr", builtin.lsp_references, opts)
@@ -319,150 +358,3 @@ keyset({ 'n', 'v' }, "<S-A-h>", vim.lsp.buf.clear_references, opts)
 keyset({ 'n', 'v' }, "<S-A-f>", vim.lsp.buf.format, opts)
 keyset({ 'n', 'v' }, "<leader>rn", vim.lsp.buf.rename, opts)
 keyset({ 'n', 'v' }, "<leader>ac", vim.lsp.buf.code_action, opts)
-
-vim.lsp.config = {
-  lua = {
-    cmd = { 'lua-language-server' },
-    filetypes = { 'lua' },
-    root_markers = { '.luarc.json', '.luarc.jsonc' },
-    settings = {
-      Lua = { diagnostics = { globals = { "vim" } } }
-    },
-  },
-  nu = {
-    cmd = { 'nu', '--lsp' },
-    filetypes = { 'nu', 'nuon' },
-  },
-  rust = {
-    cmd = { 'rust-analyzer' },
-    filetypes = { 'rust' },
-    root_markers = { ' Cargo.toml', 'cargo.lock' },
-    settings = {
-      ['rust-analyzer'] = {
-        server = { extraEnv = { CARGO_TARGET_DIR = "target/analyzer" } },
-        check = { extraArgs = { '--target-dir=target/analzyer' } },
-        diagnostics = { disabled = { 'inactive-code' } }
-      }
-    }
-  },
-  python = {
-    cmd = { 'pylsp' },
-    filetypes = { 'python' },
-    root_markers = { 'pyproject.toml', 'setup.py', 'poetry.lock', 'pyrightconfig.json' },
-    settings = {
-      pylsp = { plugins = { ruff = { lineLength = 120, ignore = { 'E401' } } },
-      }
-    }
-  },
-  clangd = {
-    cmd = { "clangd" },
-    filetypes = { "c", "cc", "cpp", "c++", "objc", "objcpp" },
-    root_markers = { "compile_flags.txt", "compile_commands.json" },
-  },
-  vue = {
-    cmd = { "vue-language-server", "--stdio" },
-    filetypes = { "vue" },
-    root_markers = { "package.json" },
-    init_options = { typescript = { tsdk = "node_modules/typescript/lib" } }
-  },
-  typescript = {
-    cmd = { "typescript-language-server", "--stdio" },
-    filetypes = { "javascript", "typescript", "vue" },
-    init_options = {
-      plugins = { {
-        name = "@vue/typescript-plugin",
-        location = "U:/scoop/.npm-global/node_modules/@vue/typescript-plugin",
-        languages = { "javascript", "typescript", "vue" },
-      } },
-    }
-  },
-  astro = {
-    cmd = { "astro-ls", "--stdio" },
-    filetypes = { "astro" },
-    init_options = { typescript = { tsdk = "node_modules/typescript/lib" } }
-  },
-  toml = {
-    cmd = { "taplo", "lsp", "stdio" },
-    filetypes = { "toml" },
-  },
-  html = {
-    cmd = { "vscode-html-language-server", "--stdio" },
-    filetypes = { "html" },
-  },
-  css = {
-    cmd = { "vscode-css-language-server", "--stdio" },
-    filetypes = { "css" },
-    init_options = {
-      provideFormatter = true,
-      vue = { hybirdMode = false },
-      css = { validate = { enable = true } }
-    }
-  },
-  json = {
-    cmd = { "vscode-json-language-server", "--stdio" },
-    filetypes = { "json" }
-  },
-  cmake = {
-    cmd = { "cmake-language-server" },
-    filetypes = { "cmake" },
-    root_markers = { "build/" },
-    init_options = { buildDirectory = "build" }
-  },
-  glsl = {
-    cmd = { "glsl_analyzer", "--stdio" },
-    filetypes = { "glsl", "vert", "tesc", "tese", "geom", "frag", "comp" }
-  }
-}
-
-for key, _ in pairs(vim.lsp.config) do
-  vim.lsp.enable(key)
-end
-
-
-vim.api.nvim_create_autocmd('LspAttach', {
-  group = vim.api.nvim_create_augroup('my.lsp', {}),
-  callback = function(ev)
-    -- local client = assert(vim.lsp.get_client_by_id(ev.data.client_id))
-    -- if client:supports_method('textDocument/completion') then
-    --   vim.lsp.completion.enable(true, client.id, ev.buf, { autotrigger = false })
-    -- end
-    -- if not client:supports_method('textDocument/willSaveWaitUntil')
-    --     and client:supports_method('textDocument/formatting') then
-    --   vim.api.nvim_create_autocmd('BufWritePre', {
-    --     group = vim.api.nvim_create_augroup('my.lsp', { clear = false }),
-    --     buffer = ev.buf,
-    --     callback = function()
-    --       vim.lsp.buf.format({ bufnr = ev.buf, id = client.id, timeout_ms = 1000 })
-    --     end,
-    --   })
-    -- end
-  end,
-})
-
-vim.diagnostic.config({
-  virtual_text = { current_lines = true },
-  underline = true,
-  update_in_insert = false,
-  serverity_sort = true,
-  float = { source = "always", border = "rounded" }
-})
-local signs = { Error = " ", Warn = " ", Hint = "", Info = " " }
-for type, icon in pairs(signs) do
-  local hl = "DiagnosticSign" .. type
-  vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
-end
-
--- Normal = { bg = "" },
--- SignColumn = { bg = "" },
--- WinSeparator = { fg = ayu.ui, bg = "" },
--- Visual = { bg = ayu.selection_border },
--- CursorLine = { bg = lightBlue },
--- CursorLineNr = { bg = lightBlue },
--- Search = { bg = ayu.ui },
--- --Comment = gray,
--- LineNr = { fg = ayu.comment },
--- NonText = gray,
--- DiagnosticHint = gray,
--- SpecialKey = gray,
--- NvimTreeIndentMarker = gray,
--- Folded = { fg = 'lightgray', bg = "" },
