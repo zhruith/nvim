@@ -12,12 +12,15 @@ require "lazy".setup {
   install = { colorscheme = { "ayu" } },
   checker = { enabled = false },
   spec = {
-    { 'neoclide/coc.nvim', branch = "release" },
     { 'shatur/neovim-ayu',
       config = function()
+        local nobg = { bg = '' }
         require("ayu").setup {
           mirage = false, terminal = false,
-          overrides = { NormalFloat = { bg = "black" }, CocHighlightText = { bg = "#1B3A5B" }, } }
+          overrides = {
+            Normal = nobg, SignColumn = nobg, WinSeparator = { fg = "#1B3A5B", bg = "" },
+            NormalFloat = { bg = "black" },
+          } }
         require("ayu").colorscheme()
       end },
     { 'nvim-lualine/lualine.nvim',
@@ -39,10 +42,11 @@ require "lazy".setup {
           lualine_a = {
             { 'mode', fmt = function(str) return str:sub(1, 3) end }
           },
-          lualine_c = { 'filename', 'g:coc_status' },
-          lualine_x = {
-            { 'datetime', style = '%H:%M:%S' },
+          lualine_c = {
+            function() return require('auto-session.lib').current_session_name(true) end,
+            'filename',
           },
+          lualine_x = { { 'datetime', style = '%H:%M:%S' }, },
           lualine_y = { 'fileformat', 'filetype',
             { 'progress', fmt = function() return "%L" end, },
             'progress' },
@@ -104,24 +108,50 @@ require "lazy".setup {
           }) do
             vim.keymap.set('n', k, v[1], v[2])
           end
-        end,
-      } },
+        end } },
     { 'easymotion/vim-easymotion',
-      keys = { { "s", "<Plug>(easymotion-overwin-w)", mode = "n" } },
+      keys = { { "<space>s", "<Plug>(easymotion-overwin-w)", mode = "n" } },
       opts = { EasyMotion_do_mapping = 0, EasyMotion_smartcase = 1 }
     },
-    -- { 'lewis6991/gitsigns.nvim',
-    --   cmd = "Gitsigns",
-    --   opts = {},
-    -- },
+    { 'lewis6991/gitsigns.nvim',
+      event = "BufReadPost",
+      opts = {},
+    },
     { "lukas-reineke/indent-blankline.nvim",
       event = "BufReadPost",
       main = "ibl",
       opts = {},
+    },
+    { "windwp/nvim-autopairs",
+      event = "InsertEnter",
+      config = true
+    },
+    {
+      "nvim-telescope/telescope.nvim", tag = '0.1.8',
+      dependencies = { 'nvim-lua/plenary.nvim' }
+    },
+    {
+      "saghen/blink.cmp",
+      dependencies = { 'rafamadriz/friendly-snippets' },
+      version = '1.*',
+      opts = {
+        keymap = { preset = 'enter' },
+        fuzzy = { implementation = 'lua' },
+        completion = { documentation = { auto_show = true } },
+      },
+    },
+    {
+      "rmagatti/auto-session",
+      keys = { { '<space>o', ':SessionSearch<cr>', mode = { 'n', 'x' } } },
+      opts = {
+        auto_create = false,
+        root_dir = "~/vimfiles/sessions/",
+      }
     }
     -- 'puremourning/vimspector',
   },
 }
+
 -- global settings
 for key, value in pairs({
   wrap = false,
@@ -159,201 +189,68 @@ vim.cmd('set shellxquote= shellxquote=')
 vim.cmd('au BufNewFile,BufReadPost *.fs,*.vs set filetype=glsl')
 vim.cmd('au BufNewFile,BufReadPost *.json set filetype=jsonc')
 
--- coc.nvim default settings
+-- default settings
 local keyset = vim.keymap.set
 local silent = { silent = true }
--- Autocomplete
-function _G.check_back_space()
-  local col = vim.fn.col('.') - 1
-  return col == 0 or vim.fn.getline('.'):sub(col, col):match('%s') ~= nil
-end
 
-local opts = { silent = true, noremap = true, expr = true, replace_keycodes = false }
-keyset("i", "<TAB>", 'coc#pum#visible() ? coc#pum#next(1) : v:lua.check_back_space() ? "<TAB>" : coc#refresh()', opts)
-keyset("i", "<S-TAB>", [[coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"]], opts)
--- Make <CR> to accept selected completion item or notify coc.nvim to format
--- <C-g>u breaks current undo, please make your own choice
-keyset("i", "<cr>", [[coc#pum#visible() ? coc#pum#confirm() : "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"]], opts)
--- Use <c-j> to trigger snippets
-keyset("i", "<c-j>", "<Plug>(coc-snippets-expand-jump)")
--- Use <c-space> to trigger completion
-keyset("i", "<c-space>", "coc#refresh()", { silent = true, expr = true })
--- Use `[g` and `]g` to navigate diagnostics
--- Use `:CocDiagnostics` to get all diagnostics of current buffer in location list
-keyset("n", "[d", "<Plug>(coc-diagnostic-next)", silent)
-keyset("n", "]d", "<Plug>(coc-diagnostic-prev)", silent)
--- GoTo code navigation
-keyset("n", "gd", "<Plug>(coc-definition)", silent)
-keyset("n", "gD", "<Plug>(coc-declaration)", silent)
-keyset("n", "gy", "<Plug>(coc-type-definition)", silent)
-keyset("n", "gi", "<Plug>(coc-implementation)", silent)
-keyset("n", "gr", "<Plug>(coc-references)", silent)
--- Use K to show documentation in preview window
-function _G.show_docs()
-  if vim.fn.index({ "vim", "lua", "help" }, vim.bo.filetype) >= 0 then
-    vim.fn.CocActionAsync('doHover')
-  elseif vim.api.nvim_eval('coc#rpc#ready()') then
-    vim.fn.CocActionAsync('doHover')
-  else
-    vim.api.nvim_command('!' .. vim.o.keywordprg .. ' ' .. vim.fn.expand('<cword>'))
-  end
-end
 
-function _G.show_help_docs()
-  if vim.fn.index({ "vim", "lua", "help" }, vim.bo.filetype) >= 0 then
-    if pcall(function() vim.api.nvim_command('h ' .. vim.fn.expand('<cword>')) end) then
-    else
-      vim.print('Not exists this help word: ' .. vim.fn.expand('<cword>'))
-    end
-  end
-end
+local builtin = require('telescope.builtin')
+vim.keymap.set('n', '<space>c', builtin.commands, { desc = '' })
+vim.keymap.set('n', '<space>b', builtin.buffers, { desc = '' })
+vim.keymap.set('n', '<space>r', builtin.oldfiles, { desc = '' })
+vim.keymap.set('n', '<space>?', builtin.search_history, { desc = '' })
 
-keyset("n", "K", '<CMD>lua _G.show_docs()<CR>', silent)
-keyset("n", "<space>K", '<CMD>lua _G.show_help_docs()<CR>', silent)
--- Highlight the symbol and its references on a CursorHold event(cursor is idle)
-vim.api.nvim_create_augroup("CocGroup", {})
--- vim.api.nvim_create_autocmd("CursorHold", {
--- 	group = "CocGroup",
--- 	command = "silent call CocActionAsync('highlight')",
--- 	desc = "Highlight symbol under cursor on CursorHold"
--- })
--- Symbol renaming
-keyset("n", "<leader>rn", "<Plug>(coc-rename)", silent)
--- Formatting selected code
-keyset("x", "<leader>f", "<Plug>(coc-format-selected)", silent)
-keyset("n", "<leader>f", "<Plug>(coc-format-selected)", silent)
--- Setup formatexpr specified filetype(s)
-vim.api.nvim_create_autocmd("FileType", {
-  group = "CocGroup",
-  pattern = "typescript,json",
-  command = "setl formatexpr=CocAction('formatSelected')",
-  desc = "Setup formatexpr specified filetype(s)."
-})
--- Update signature help on jump placeholder
-vim.api.nvim_create_autocmd("User", {
-  group = "CocGroup",
-  pattern = "CocJumpPlaceholder",
-  command = "call CocActionAsync('showSignatureHelp')",
-  desc = "Update signature help on jump placeholder"
-})
--- Apply codeAction to the selected region
--- Example: `<leader>aap` for current paragraph
-local opts2 = { silent = true, nowait = true }
-keyset("x", "<leader>a", "<Plug>(coc-codeaction-selected)", opts2)
-keyset("n", "<leader>a", "<Plug>(coc-codeaction-selected)", opts2)
--- Remap keys for apply code actions at the cursor position.
-keyset("n", "<leader>ac", "<Plug>(coc-codeaction-cursor)", opts2)
--- Remap keys for apply source code actions for current file.
-keyset("n", "<leader>as", "<Plug>(coc-codeaction-source)", opts2)
--- Apply the most preferred quickfix action on the current line.
-keyset("n", "<leader>qf", "<Plug>(coc-fix-current)", opts2)
--- Remap keys for apply refactor code actions.
-keyset("n", "<leader>re", "<Plug>(coc-codeaction-refactor)", silent)
-keyset("x", "<leader>r", "<Plug>(coc-codeaction-refactor-selected)", silent)
-keyset("n", "<leader>r", "<Plug>(coc-codeaction-refactor-selected)", silent)
--- Run the Code Lens actions on the current line
-keyset("n", "<leader>cl", "<Plug>(coc-codelens-action)", opts2)
--- Map function and class text objects
--- NOTE: Requires 'textDocument.documentSymbol' support from the language server
-keyset("x", "if", "<Plug>(coc-funcobj-i)", opts2)
-keyset("o", "if", "<Plug>(coc-funcobj-i)", opts2)
-keyset("x", "af", "<Plug>(coc-funcobj-a)", opts2)
-keyset("o", "af", "<Plug>(coc-funcobj-a)", opts2)
-keyset("x", "ic", "<Plug>(coc-classobj-i)", opts2)
-keyset("o", "ic", "<Plug>(coc-classobj-i)", opts2)
-keyset("x", "ac", "<Plug>(coc-classobj-a)", opts2)
-keyset("o", "ac", "<Plug>(coc-classobj-a)", opts2)
--- Remap <C-f> and <C-b> to scroll float windows/popups
----@diagnostic disable-next-line: redefined-local
-local opts = { silent = true, nowait = true, expr = true }
-keyset("n", "<C-d>", 'coc#float#has_float() ? coc#float#scroll(1) : "<C-d>"', opts)
-keyset("n", "<C-u>", 'coc#float#has_float() ? coc#float#scroll(0) : "<C-u>"', opts)
-keyset("i", "<C-d>", 'coc#float#has_float() ? "<c-r>=coc#float#scroll(1)<cr>" : "<Right>"', opts)
-keyset("i", "<C-u>", 'coc#float#has_float() ? "<c-r>=coc#float#scroll(0)<cr>" : "<Left>"', opts)
-keyset("v", "<C-d>", 'coc#float#has_float() ? coc#float#scroll(1) : "<C-d>"', opts)
-keyset("v", "<C-u>", 'coc#float#has_float() ? coc#float#scroll(0) : "<C-u>"', opts)
--- Use CTRL-S for selections ranges
--- Requires 'textDocument/selectionRange' support of language server
-vim.api.nvim_create_user_command("Format", "call CocAction('format')", {})
-vim.api.nvim_create_user_command("Fold", "call CocAction('fold', <f-args>)", { nargs = '?' })
-vim.api.nvim_create_user_command("OR", "call CocActionAsync('runCommand', 'editor.action.organizeImport')", {})
--- Add (Neo)Vim's native statusline support
--- NOTE: Please see `:h coc-status` for integrations with external plugins that
--- provide custom statusline: lightline.vim, vim-airline
-vim.opt.statusline:prepend("%{coc#status()}%{get(b:,'coc_current_function','')}")
--- Mappings for CoCList
--- code actions and coc stuff
----@diagnostic disable-next-line: redefined-local
-local opts3 = { silent = true, nowait = true, expr = false }
-keyset("n", "<space>d", ":CocList diagnostics<cr>", opts3)
-keyset("n", "<space>x", ":CocList extensions<cr>", opts3)
-keyset("n", "<space>c", ":CocList commands<cr>", opts3)
-keyset("n", "<space>o", ":CocCommand session.load<cr>", opts3)
-keyset("n", "<space>s", ":CocList outline<cr>", opts3)
-keyset("n", "<space>S", ":CocList -I symbols<cr>", opts3)
-keyset("n", "<space>j", ":CocNext<cr>", opts3)
-keyset("n", "<space>k", ":CocPrev<cr>", opts3)
-keyset("n", "<space>p", ":CocListResume<cr>", opts3)
-keyset("n", "<space>m", ":CocList marketplace<cr>", opts3)
-keyset("n", "<space>b", ":CocList buffers<cr>", opts3)
-keyset("n", "<space>f", ":CocList files<cr>", opts3)
-keyset("n", "<space>l", ":CocList<cr>", opts3)
-keyset("n", "<space>g", ":CocList grep<cr>", opts3)
-keyset("n", "<space>r", ":CocList mru<cr>", opts3)
-keyset("n", "<space>v", ":CocList vimcommands<cr>", opts3)
-keyset("n", "<space>L", ":Lazy<cr>", opts3)
+vim.keymap.set('n', '<space>f', builtin.find_files, { desc = 'Telescope find files' })
+vim.keymap.set('n', '<space>g', builtin.live_grep, { desc = 'Telescope live grep' })
+vim.keymap.set('n', '<space>b', builtin.buffers, { desc = 'Telescope buffers' })
+vim.keymap.set('n', '<space>h', builtin.help_tags, { desc = 'Telescope help tags' })
 
+vim.keymap.set('n', 'gr', builtin.lsp_references, { desc = '' })
+vim.keymap.set('n', 'gi', builtin.lsp_implementations, { desc = '' })
+vim.keymap.set('n', '<space>ls', builtin.lsp_document_symbols, { desc = '' })
+vim.keymap.set('n', '<space>lS', builtin.lsp_workspace_symbols, { desc = '' })
+vim.keymap.set('n', '<space>li', builtin.lsp_incoming_calls, { desc = '' })
+vim.keymap.set('n', '<space>lo', builtin.lsp_outgoing_calls, { desc = '' })
+vim.keymap.set('n', '<space>ld', builtin.diagnostics, { desc = '' })
+
+local opts = { silent = true, nowait = true, expr = false }
 -- g keyshot
-keyset("n", "gn", ":bn<cr>", opts3)
-keyset("n", "gp", ":bp<cr>", opts3)
-keyset("n", "gq", ":bd%<cr>", opts3)
-keyset("n", "gQ", ":%bd!|e#|bd#<cr>", opts3)
-keyset("n", "ga", ":e#<cr>", opts3)
-keyset("n", "gw", "<Plug>(coc-float-jump)", opts3)
-keyset({ "n", "x" }, "gh", "0", opts3)
-keyset({ "n", "x" }, "gs", "^", opts3)
-keyset({ "n", "x" }, "gl", "$", opts3)
-keyset("n", "gc", "M", opts3)
-keyset("n", "ge", "G", opts3)
+keyset("n", "gn", ":bn<cr>", opts)
+keyset("n", "gp", ":bp<cr>", opts)
+keyset("n", "gq", ":bd%<cr>", opts)
+keyset("n", "gQ", ":%bd!|e#|bd#<cr>", opts)
+keyset("n", "ga", ":e#<cr>", opts)
+keyset({ "n", "x" }, "gh", "0", opts)
+keyset({ "n", "x" }, "gs", "^", opts)
+keyset({ "n", "x" }, "gl", "$", opts)
+keyset("n", "gc", "M", opts)
+keyset("n", "ge", "G", opts)
 -- misc keyshot
-keyset("n", "?", ":CocList words<cr>", opts3)
-keyset("n", "t", ":BufferLinePick<cr>", opts3)
-keyset("n", "<S-A-f>", ":CocCommand editor.action.formatDocument<cr>", opts3)
-keyset("n", "<S-A-c>", ":e $MYVIMRC<cr>", opts3)
-keyset("n", "<S-A-r>", ":luafile %<cr>", opts3)
+keyset("n", "t", ":BufferLinePick<cr>", opts)
+keyset("n", "<S-A-c>", ":e $MYVIMRC<cr>", opts)
+keyset("n", "<S-A-r>", ":luafile %<cr>", opts)
 keyset({ "n", "x", "i" }, "<C-s>", "<Esc>:w<cr>", silent)
-keyset("n", "<M-h>", function() vim.fn.CocActionAsync('highlight') end, opts3)
-keyset("n", "(", ":CocCommand document.jumpToNextSymbol<cr>", opts3)
-keyset("n", ")", ":CocCommand document.jumpToPrevSymbol<cr>", opts3)
 -- moving cursor
-keyset("n", "<C-h>", "<C-w>h", opts3)
-keyset("n", "<C-l>", "<C-w>l", opts3)
-keyset("n", "<C-j>", "<C-w>j", opts3)
-keyset("n", "<C-k>", "<C-w>k", opts3)
-keyset({ "i", "t" }, "<C-h>", "<C-\\><C-n><C-w>h", opts3)
-keyset({ "i", "t" }, "<C-l>", "<C-\\><C-n><C-w>l", opts3)
-keyset({ "i", "t" }, "<C-j>", "<C-\\><C-n><C-w>j", opts3)
-keyset({ "i", "t" }, "<C-k>", "<C-\\><C-n><C-w>k", opts3)
-keyset("t", "<C-v>", '<C-\\><C-n>"0pa', opts3)
-keyset("t", "<C-q>", "<C-\\><C-n>", opts3)
+keyset({ "n", "i", "t" }, "<C-S-h>", "<C-\\><C-n><C-w>h", opts)
+keyset({ "n", "i", "t" }, "<C-S-l>", "<C-\\><C-n><C-w>l", opts)
+keyset({ "n", "i", "t" }, "<C-S-j>", "<C-\\><C-n><C-w>j", opts)
+keyset({ "n", "i", "t" }, "<C-S-k>", "<C-\\><C-n><C-w>k", opts)
+keyset({ "i", "t" }, "<C-v>", '<C-\\><C-n>"0pa', opts)
+keyset({ "i", "t" }, "<C-q>", "<C-\\><C-n>", opts)
 -- moving lines
-keyset("n", "<M-j>", ":m .+1<cr>", opts3)
-keyset("n", "<M-k>", ":m .-2<cr>", opts3)
-keyset("i", "<M-j>", "<Esc>:m .+1<cr>a", opts3)
-keyset("i", "<M-k>", "<Esc>:m .-2<cr>a", opts3)
-keyset("v", "<M-j>", ":m '>+1<cr>gv-gv", opts3)
-keyset("v", "<M-k>", ":m '<-2<cr>gv-gv", opts3)
-keyset("v", "<", "<gv", opts3)
-keyset("v", ">", ">gv", opts3)
+keyset("n", "<M-j>", ":m .+1<cr>", opts)
+keyset("n", "<M-k>", ":m .-2<cr>", opts)
+keyset("i", "<M-j>", "<Esc>:m .+1<cr>a", opts)
+keyset("i", "<M-k>", "<Esc>:m .-2<cr>a", opts)
+keyset("v", "<M-j>", ":m '>+1<cr>gv-gv", opts)
+keyset("v", "<M-k>", ":m '<-2<cr>gv-gv", opts)
+keyset("v", "<", "<gv", opts)
+keyset("v", ">", ">gv", opts)
 -- resize window
-keyset("n", "<S-M-h>", ":vertical resize -2<cr>", opts3)
-keyset("n", "<S-M-l>", ":vertical resize +2<cr>", opts3)
-keyset("n", "<S-M-j>", ":resize -2<cr>", opts3)
-keyset("n", "<S-M-k>", ":resize +2<cr>", opts3)
-keyset({ "i", "t" }, "<S-M-h>", "<C-\\><C-n>:vertical resize -2<cr>a", opts3)
-keyset({ "i", "t" }, "<S-M-l>", "<C-\\><C-n>:vertical resize +2<cr>a", opts3)
-keyset({ "i", "t" }, "<S-M-j>", "<C-\\><C-n>:resize -2<cr>a", opts3)
-keyset({ "i", "t" }, "<S-M-k>", "<C-\\><C-n>:resize +2<cr>a", opts3)
+keyset({ "n", "i", "t" }, "<S-M-h>", "<C-\\><C-n>:vertical resize -2<cr>a", opts)
+keyset({ "n", "i", "t" }, "<S-M-l>", "<C-\\><C-n>:vertical resize +2<cr>a", opts)
+keyset({ "n", "i", "t" }, "<S-M-j>", "<C-\\><C-n>:resize -2<cr>a", opts)
+keyset({ "n", "i", "t" }, "<S-M-k>", "<C-\\><C-n>:resize +2<cr>a", opts)
 
 local function terminal_create(cmd)
   vim.cmd(string.format('%s | terminal', cmd))
@@ -381,8 +278,8 @@ vim.api.nvim_create_autocmd({ "BufHidden" }, {
   end
 })
 
-keyset({ "n", "i", "t" }, "<M-+>", function() terminal_create('vsplit | wincmd l') end, opts3)
-keyset({ "n", "i", "t" }, "<M-_>", function() terminal_create('split | wincmd j') end, opts3)
+keyset({ "n", "i", "t" }, "<M-+>", function() terminal_create('vsplit | wincmd l') end, opts)
+keyset({ "n", "i", "t" }, "<M-_>", function() terminal_create('split | wincmd j') end, opts)
 
 -- set terminal
 vim.cmd([[nnoremap <silent><M-1> <Cmd>exe v:count . "ToggleTerm direction=horizontal"<CR>]])
@@ -391,9 +288,9 @@ vim.cmd([[nnoremap <silent><M-3> <Cmd>exe v:count . "ToggleTerm direction=float"
 vim.api.nvim_create_autocmd("TermEnter", {
   pattern = "term://*toggleterm#*",
   callback = function()
-    keyset("t", "<M-1>", string.format('<Cmd>exe %d . "ToggleTerm"<CR>', vim.v.count), opts3)
-    keyset("t", "<M-2>", string.format('<Cmd>exe %d . "ToggleTerm"<CR>', vim.v.count), opts3)
-    keyset("t", "<M-3>", string.format('<Cmd>exe %d . "ToggleTerm"<CR>', vim.v.count), opts3)
+    keyset("t", "<M-1>", string.format('<Cmd>exe %d . "ToggleTerm"<CR>', vim.v.count), opts)
+    keyset("t", "<M-2>", string.format('<Cmd>exe %d . "ToggleTerm"<CR>', vim.v.count), opts)
+    keyset("t", "<M-3>", string.format('<Cmd>exe %d . "ToggleTerm"<CR>', vim.v.count), opts)
   end,
 })
 -- auto set cursor to the last position
@@ -412,21 +309,148 @@ vim.api.nvim_create_autocmd('BufReadPost', {
   end,
 })
 
-vim.g.coc_global_extensions = {
-  'coc-git',
-  'coc-json',
-  'coc-pairs',
-  'coc-marketplace',
-  'coc-lists',
+keyset({ 'n', 'v' }, "gd", vim.lsp.buf.definition, opts)
+keyset({ 'n', 'v' }, "gD", vim.lsp.buf.declaration, opts)
+keyset({ 'n', 'v' }, "gr", builtin.lsp_references, opts)
+keyset({ 'n', 'v' }, "gt", vim.lsp.buf.type_definition, opts)
+keyset({ 'n', 'v' }, "gi", builtin.lsp_implementations, opts)
+keyset({ 'n', 'v' }, "<A-h>", vim.lsp.buf.document_highlight, opts)
+keyset({ 'n', 'v' }, "<S-A-h>", vim.lsp.buf.clear_references, opts)
+keyset({ 'n', 'v' }, "<S-A-f>", vim.lsp.buf.format, opts)
+keyset({ 'n', 'v' }, "<leader>rn", vim.lsp.buf.rename, opts)
+keyset({ 'n', 'v' }, "<leader>ac", vim.lsp.buf.code_action, opts)
+
+vim.lsp.config = {
+  lua = {
+    cmd = { 'lua-language-server' },
+    filetypes = { 'lua' },
+    root_markers = { '.luarc.json', '.luarc.jsonc' },
+    settings = {
+      Lua = { diagnostics = { globals = { "vim" } } }
+    },
+  },
+  nu = {
+    cmd = { 'nu', '--lsp' },
+    filetypes = { 'nu', 'nuon' },
+  },
+  rust = {
+    cmd = { 'rust-analyzer' },
+    filetypes = { 'rust' },
+    root_markers = { ' Cargo.toml', 'cargo.lock' },
+    settings = {
+      ['rust-analyzer'] = {
+        server = { extraEnv = { CARGO_TARGET_DIR = "target/analyzer" } },
+        check = { extraArgs = { '--target-dir=target/analzyer' } },
+        diagnostics = { disabled = { 'inactive-code' } }
+      }
+    }
+  },
+  python = {
+    cmd = { 'pylsp' },
+    filetypes = { 'python' },
+    root_markers = { 'pyproject.toml', 'setup.py', 'poetry.lock', 'pyrightconfig.json' },
+    settings = {
+      pylsp = { plugins = { ruff = { lineLength = 120, ignore = { 'E401' } } },
+      }
+    }
+  },
+  clangd = {
+    cmd = { "clangd" },
+    filetypes = { "c", "cc", "cpp", "c++", "objc", "objcpp" },
+    root_markers = { "compile_flags.txt", "compile_commands.json" },
+  },
+  vue = {
+    cmd = { "vue-language-server", "--stdio" },
+    filetypes = { "vue" },
+    root_markers = { "package.json" },
+    init_options = { typescript = { tsdk = "node_modules/typescript/lib" } }
+  },
+  typescript = {
+    cmd = { "typescript-language-server", "--stdio" },
+    filetypes = { "javascript", "typescript", "vue" },
+    init_options = {
+      plugins = { {
+        name = "@vue/typescript-plugin",
+        location = "U:/scoop/.npm-global/node_modules/@vue/typescript-plugin",
+        languages = { "javascript", "typescript", "vue" },
+      } },
+    }
+  },
+  astro = {
+    cmd = { "astro-ls", "--stdio" },
+    filetypes = { "astro" },
+    init_options = { typescript = { tsdk = "node_modules/typescript/lib" } }
+  },
+  toml = {
+    cmd = { "taplo", "lsp", "stdio" },
+    filetypes = { "toml" },
+  },
+  html = {
+    cmd = { "vscode-html-language-server", "--stdio" },
+    filetypes = { "html" },
+  },
+  css = {
+    cmd = { "vscode-css-language-server", "--stdio" },
+    filetypes = { "css" },
+    init_options = {
+      provideFormatter = true,
+      vue = { hybirdMode = false },
+      css = { validate = { enable = true } }
+    }
+  },
+  json = {
+    cmd = { "vscode-json-language-server", "--stdio" },
+    filetypes = { "json" }
+  },
+  cmake = {
+    cmd = { "cmake-language-server" },
+    filetypes = { "cmake" },
+    root_markers = { "build/" },
+    init_options = { buildDirectory = "build" }
+  },
+  glsl = {
+    cmd = { "glsl_analyzer", "--stdio" },
+    filetypes = { "glsl", "vert", "tesc", "tese", "geom", "frag", "comp" }
+  }
 }
--- '@yaegassy/coc-volar',
--- '@yaegassy/coc-volar-tools',
--- 'coc-toml',
--- 'coc-clangd',
--- 'coc-rust-analyzer',
--- 'coc-tsserver',
--- '@yaegassy/coc-pylsp',
--- 'coc-sumneko-lua',
+
+for key, _ in pairs(vim.lsp.config) do
+  vim.lsp.enable(key)
+end
+
+
+vim.api.nvim_create_autocmd('LspAttach', {
+  group = vim.api.nvim_create_augroup('my.lsp', {}),
+  callback = function(ev)
+    -- local client = assert(vim.lsp.get_client_by_id(ev.data.client_id))
+    -- if client:supports_method('textDocument/completion') then
+    --   vim.lsp.completion.enable(true, client.id, ev.buf, { autotrigger = false })
+    -- end
+    -- if not client:supports_method('textDocument/willSaveWaitUntil')
+    --     and client:supports_method('textDocument/formatting') then
+    --   vim.api.nvim_create_autocmd('BufWritePre', {
+    --     group = vim.api.nvim_create_augroup('my.lsp', { clear = false }),
+    --     buffer = ev.buf,
+    --     callback = function()
+    --       vim.lsp.buf.format({ bufnr = ev.buf, id = client.id, timeout_ms = 1000 })
+    --     end,
+    --   })
+    -- end
+  end,
+})
+
+vim.diagnostic.config({
+  virtual_text = { current_lines = true },
+  underline = true,
+  update_in_insert = false,
+  serverity_sort = true,
+  float = { source = "always", border = "rounded" }
+})
+local signs = { Error = " ", Warn = " ", Hint = "", Info = " " }
+for type, icon in pairs(signs) do
+  local hl = "DiagnosticSign" .. type
+  vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
+end
 
 -- Normal = { bg = "" },
 -- SignColumn = { bg = "" },
