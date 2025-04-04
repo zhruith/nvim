@@ -12,7 +12,19 @@ require "lazy".setup {
   install = { colorscheme = { "ayu" } },
   checker = { enabled = false },
   spec = {
-    { "neovim/nvim-lspconfig" },
+    { "neovim/nvim-lspconfig",
+      lazy = false,
+      dependencies = {
+        { "ms-jpq/coq_nvim",       branch = "coq" },
+        { "ms-jpq/coq.artifacts",  branch = "artifacts" },
+        { 'ms-jpq/coq.thirdparty', branch = "3p" }
+      },
+      init = function()
+        vim.g.coq_settings = { auto_start = true }
+      end,
+      config = function()
+      end,
+    },
     { 'shatur/neovim-ayu',
       config = function()
         local nobg = { bg = '' }
@@ -122,115 +134,56 @@ require "lazy".setup {
     },
     { "windwp/nvim-autopairs",
       event = "InsertEnter",
-      config = true
+      config = true,
     },
-    {
-      "nvim-telescope/telescope.nvim", tag = '0.1.8',
+    { "nvim-telescope/telescope.nvim", tag = '0.1.8',
       dependencies = { 'nvim-lua/plenary.nvim' }
     },
-    {
-      "saghen/blink.cmp",
-      dependencies = { 'rafamadriz/friendly-snippets' },
-      version = '1.*',
-      opts = {
-        keymap = { preset = 'enter' },
-        fuzzy = { implementation = 'lua' },
-        completion = { documentation = { auto_show = true } },
-      },
-    },
-    {
-      "rmagatti/auto-session",
+    { "rmagatti/auto-session",
       keys = { { '<space>o', ':SessionSearch<cr>', mode = { 'n', 'x' } } },
-      opts = {
-        auto_create = false,
-        root_dir = "~/vimfiles/sessions/",
-      }
+      opts = { auto_create = false, },
     },
   },
 }
--- global settings --------------------------------------------------------
-for key, value in pairs({
-  wrap = false,
-  backup = false,
-  writebackup = false,
-  hlsearch = false,
-  timeout = false,
-  ignorecase = true,
-  smartcase = true,
-  termguicolors = true,
-  expandtab = true,
-  smartindent = true,
-  wildmenu = true,
-  updatetime = 100,
-  scrolloff = 3,
-  tabstop = 2,
-  shiftwidth = 2,
-  softtabstop = 2,
-  laststatus = 0,
-  signcolumn = "yes",
-  foldmethod = "manual",
-  foldexpr = "",
-  wildmode = "list:longest,full",
-  wildignore = "*.dll,*.exe,*.jpg,*.gif,*.png",
-}) do
-  vim.opt[key] = value
-end
--- hard to batch settings
-vim.cmd('filetype indent plugin on')
-vim.cmd('set fillchars+=eob:\\ ')
-vim.cmd('set shell=nu')
-vim.o.shellcmdflag = '-c '
-vim.cmd('set shellxquote= shellxquote=')
-
-vim.cmd('au BufNewFile,BufReadPost *.fs,*.vs set filetype=glsl')
-vim.cmd('au BufNewFile,BufReadPost *.json set filetype=jsonc')
-
 ------ nvim-lspconfig----------------------------------------------------------------------------
-local lspconfig = require 'lspconfig'
+local setup = {
+  pylsp = { settings = { pylsp = { plugins = { ruff = { lineLength = 120, ignore = { 'E401' } } } } } },
+  lua_ls = {
+    settings = { Lua = {} },
+    on_init = function(client)
+      client.config.settings.Lua = vim.tbl_deep_extend('force', client.config.settings.Lua, {
+        runtime = { version = 'LuaJIT' },
+        workspace = { checkThirdParty = false, library = { vim.env.VIMRUNTIME, "${3rd}/luv/library" } },
+      })
+    end
+  },
+  rust_analyzer = {
+    settings = {
+      ['rust-analyzer'] = {
+        server = { extraEnv = { CARGO_TARGET_DIR = "target/analyzer" } },
+        check = { extraArgs = { '--target-dir=target/analzyer' } },
+        diagnostics = { disabled = { 'inactive-code' } }
+      }
+    }
+  },
+  ts_ls = {
+    filetypes = { "javascript", "typescript", "vue" },
+    init_options = {
+      plugins = { {
+        name = "@vue/typescript-plugin",
+        location = "U:/scoop/.npm-global/node_modules/@vue/typescript-plugin",
+        languages = { "javascript", "typescript", "vue" },
+      } }
+    }
+  },
+}
+local lsp = require('lspconfig')
+local coq = require('coq')
 for _, item in pairs({ 'volar', 'clangd', 'nushell', 'astro', 'html', 'jsonls', 'cssls', 'taplo',
-  'cmake', 'glsl_analyzer' }) do
-  lspconfig[item].setup {}
+  'cmake', 'glsl_analyzer', 'lua_ls', 'rust_analyzer', 'ts_ls', 'pylsp' }) do
+  lsp[item].setup(coq.lsp_ensure_capabilities(setup[item]))
 end
 
-lspconfig.lua_ls.setup {
-  settings = { Lua = {} },
-  on_init = function(client)
-    client.config.settings.Lua = vim.tbl_deep_extend('force', client.config.settings.Lua, {
-      runtime = { version = 'LuaJIT' },
-      workspace = { checkThirdParty = false, library = { vim.env.VIMRUNTIME, "${3rd}/luv/library" } },
-    })
-  end
-}
-lspconfig.rust_analyzer.setup {
-  settings = {
-    ['rust-analyzer'] = {
-      server = { extraEnv = { CARGO_TARGET_DIR = "target/analyzer" } },
-      check = { extraArgs = { '--target-dir=target/analzyer' } },
-      diagnostics = { disabled = { 'inactive-code' } }
-    }
-  }
-}
-lspconfig.ts_ls.setup {
-  filetypes = { "javascript", "typescript", "vue" },
-  init_options = {
-    plugins = { {
-      name = "@vue/typescript-plugin",
-      location = "U:/scoop/.npm-global/node_modules/@vue/typescript-plugin",
-      languages = { "javascript", "typescript", "vue" },
-    } },
-  }
-}
-lspconfig.pylsp.setup {
-  settings = { pylsp = { plugins = { ruff = {
-    lineLength = 120,
-    ignore = { 'E401' },
-  } } } }
-}
--- Enable (broadcasting) snippet capability for completion
--- local capabilities = vim.lsp.protocol.make_client_capabilities()
--- capabilities.textDocument.completion.completionItem.snippetSupport = true
---
--- vim.lsp.config("*", { capabilities = capabilities })
 vim.diagnostic.config({
   virtual_text = { current_lines = true },
   underline = true,
@@ -358,3 +311,40 @@ keyset({ 'n', 'v' }, "<S-A-h>", vim.lsp.buf.clear_references, opts)
 keyset({ 'n', 'v' }, "<S-A-f>", vim.lsp.buf.format, opts)
 keyset({ 'n', 'v' }, "<leader>rn", vim.lsp.buf.rename, opts)
 keyset({ 'n', 'v' }, "<leader>ac", vim.lsp.buf.code_action, opts)
+
+-- global settings --------------------------------------------------------
+for key, value in pairs({
+  wrap = false,
+  backup = false,
+  writebackup = false,
+  hlsearch = false,
+  timeout = false,
+  ignorecase = true,
+  smartcase = true,
+  termguicolors = true,
+  expandtab = true,
+  smartindent = true,
+  wildmenu = true,
+  updatetime = 100,
+  scrolloff = 3,
+  tabstop = 2,
+  shiftwidth = 2,
+  softtabstop = 2,
+  laststatus = 0,
+  signcolumn = "yes",
+  foldmethod = "manual",
+  foldexpr = "",
+  wildmode = "list:longest,full",
+  wildignore = "*.dll,*.exe,*.jpg,*.gif,*.png",
+}) do
+  vim.opt[key] = value
+end
+-- hard to batch settings
+vim.cmd('filetype indent plugin on')
+vim.cmd('set fillchars+=eob:\\ ')
+vim.cmd('set shell=nu')
+vim.o.shellcmdflag = '-c '
+vim.cmd('set shellxquote= shellxquote=')
+
+vim.cmd('au BufNewFile,BufReadPost *.fs,*.vs set filetype=glsl')
+vim.cmd('au BufNewFile,BufReadPost *.json set filetype=jsonc')
