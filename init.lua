@@ -9,7 +9,6 @@ end
 vim.opt.rtp:prepend(lazypath)
 -- vim.g.lazy_did_setup = false
 require "lazy".setup {
-  install = { colorscheme = { "ayu" } },
   checker = { enabled = false },
   spec = {
     { "neovim/nvim-lspconfig",
@@ -21,8 +20,6 @@ require "lazy".setup {
       },
       init = function()
         vim.g.coq_settings = { auto_start = true }
-      end,
-      config = function()
       end,
     },
     { 'shatur/neovim-ayu',
@@ -89,16 +86,12 @@ require "lazy".setup {
       end },
     { 'akinsho/bufferline.nvim',
       event = "BufReadPost",
-      -- dependencies = { 'nvim-tree/nvim-web-devicons' },
-      opts = {
-        options = {
-          always_show_bufferline = false,
-          show_buffer_close_icons = false,
-          offsets = { { filetype = 'NvimTree' }, { filetype = 'netrw' } },
-        },
-      } },
+      opts = { options = {
+        always_show_bufferline = false,
+        show_buffer_close_icons = false,
+        offsets = { { filetype = 'NvimTree' }, { filetype = 'netrw' } },
+      }, } },
     { 'nvim-tree/nvim-tree.lua',
-      -- dependencies = { 'nvim-tree/nvim-web-devicons' },
       keys = { { "<space>e", "<cmd>NvimTreeToggle<cr>", mode = { "n", "x" } } },
       opts = {
         update_focused_file = { enable = true, update_root = true },
@@ -137,7 +130,7 @@ require "lazy".setup {
       config = true,
     },
     { "nvim-telescope/telescope.nvim", tag = '0.1.8',
-      dependencies = { 'nvim-lua/plenary.nvim' }
+      dependencies = { 'nvim-lua/plenary.nvim' },
     },
     { "rmagatti/auto-session",
       keys = { { '<space>o', ':SessionSearch<cr>', mode = { 'n', 'x' } } },
@@ -152,8 +145,8 @@ local setup = {
     settings = { Lua = {} },
     on_init = function(client)
       client.config.settings.Lua = vim.tbl_deep_extend('force', client.config.settings.Lua, {
-        runtime = { version = 'LuaJIT' },
         workspace = { checkThirdParty = false, library = { vim.env.VIMRUNTIME, "${3rd}/luv/library" } },
+        runtime = { version = 'LuaJIT' },
       })
     end
   },
@@ -161,7 +154,7 @@ local setup = {
     settings = {
       ['rust-analyzer'] = {
         server = { extraEnv = { CARGO_TARGET_DIR = "target/analyzer" } },
-        check = { extraArgs = { '--target-dir=target/analzyer' } },
+        check = { extraArgs = { '--target-dir=target/analyzer' } },
         diagnostics = { disabled = { 'inactive-code' } }
       }
     }
@@ -177,21 +170,12 @@ local setup = {
     }
   },
 }
-local lsp = require('lspconfig')
-local coq = require('coq')
-for _, item in pairs({ 'volar', 'clangd', 'nushell', 'astro', 'html', 'jsonls', 'cssls', 'taplo',
-  'cmake', 'glsl_analyzer', 'lua_ls', 'rust_analyzer', 'ts_ls', 'pylsp' }) do
-  lsp[item].setup(coq.lsp_ensure_capabilities(setup[item]))
+for _, item in pairs({ 'lua_ls', 'volar', 'clangd', 'nushell', 'astro', 'html', 'jsonls', 'cssls', 'taplo',
+  'cmake', 'glsl_analyzer', 'rust_analyzer', 'ts_ls', 'pylsp' }) do
+  require('lspconfig')[item].setup(setup[item] == nil and {} or setup[item])
 end
 
-vim.diagnostic.config({
-  virtual_text = { current_lines = true },
-  underline = true,
-  update_in_insert = false,
-  serverity_sort = true,
-  float = { border = "rounded" }
-})
----------------- default settings -------------------------------------------
+---------------- terminal function -------------------------------------------
 local function terminal_create(cmd)
   vim.cmd(string.format('%s | terminal', cmd))
   vim.cmd("startinsert")
@@ -215,7 +199,7 @@ vim.api.nvim_create_autocmd({ "BufHidden" }, {
     end)
   end
 })
------------------ auto set cursor to the last position -----------------------------
+----------------- auto move cursor to the last position -----------------------------
 vim.api.nvim_create_autocmd('BufReadPost', {
   pattern = { '*' },
   desc = 'When editing a file, always jump to the last known cursor position',
@@ -248,8 +232,6 @@ keyset({ 'n', 'v' }, '<space>d', builtin.diagnostics, { desc = '' })
 
 local opts = { silent = true, nowait = true, expr = false }
 -- g keyshot
-keyset('n', 'gr', builtin.lsp_references, { desc = '' })
-keyset('n', 'gi', builtin.lsp_implementations, { desc = '' })
 keyset("n", "gn", ":bn<cr>", opts)
 keyset("n", "gp", ":bp<cr>", opts)
 keyset("n", "gq", ":bd%<cr>", opts)
@@ -306,11 +288,12 @@ keyset({ 'n', 'v' }, "gD", vim.lsp.buf.declaration, opts)
 keyset({ 'n', 'v' }, "gr", builtin.lsp_references, opts)
 keyset({ 'n', 'v' }, "gt", vim.lsp.buf.type_definition, opts)
 keyset({ 'n', 'v' }, "gi", builtin.lsp_implementations, opts)
-keyset({ 'n', 'v' }, "<A-h>", vim.lsp.buf.document_highlight, opts)
-keyset({ 'n', 'v' }, "<S-A-h>", vim.lsp.buf.clear_references, opts)
 keyset({ 'n', 'v' }, "<S-A-f>", vim.lsp.buf.format, opts)
 keyset({ 'n', 'v' }, "<leader>rn", vim.lsp.buf.rename, opts)
 keyset({ 'n', 'v' }, "<leader>ac", vim.lsp.buf.code_action, opts)
+keyset({ 'n', 'v' }, "<A-h>", function()
+  vim.lsp.buf.document_highlight(); vim.defer_fn(vim.lsp.buf.clear_references, 2000)
+end, opts)
 
 -- global settings --------------------------------------------------------
 for key, value in pairs({
@@ -336,9 +319,7 @@ for key, value in pairs({
   foldexpr = "",
   wildmode = "list:longest,full",
   wildignore = "*.dll,*.exe,*.jpg,*.gif,*.png",
-}) do
-  vim.opt[key] = value
-end
+}) do vim.opt[key] = value end
 -- hard to batch settings
 vim.cmd('filetype indent plugin on')
 vim.cmd('set fillchars+=eob:\\ ')
