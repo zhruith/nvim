@@ -24,11 +24,11 @@ require "lazy".setup {
     },
     { 'shatur/neovim-ayu',
       config = function()
-        local nobg = { bg = '' }
+        -- local nobg = { bg = '' }
         require("ayu").setup {
-          mirage = false, terminal = false,
+          mirage = false, terminal = true,
           overrides = {
-            Normal = nobg, SignColumn = nobg, WinSeparator = { fg = "#1B3A5B", bg = "" },
+            -- Normal = nobg, SignColumn = nobg, WinSeparator = { fg = "#1B3A5B", bg = "" },
             NormalFloat = { bg = "black" },
           } }
         require("ayu").colorscheme()
@@ -121,9 +121,12 @@ require "lazy".setup {
       opts = {},
     },
     { "lukas-reineke/indent-blankline.nvim",
-      event = "BufReadPost",
+      event = "BufReadPre",
       main = "ibl",
-      opts = {},
+      opts = {
+        indent = { char = "╎" },
+        scope = { enabled = false },
+      },
     },
     { "windwp/nvim-autopairs",
       event = "InsertEnter",
@@ -313,7 +316,7 @@ for key, value in pairs({
   tabstop = 2,
   shiftwidth = 2,
   softtabstop = 2,
-  laststatus = 0,
+  -- laststatus = 10,
   signcolumn = "yes",
   foldmethod = "manual",
   foldexpr = "",
