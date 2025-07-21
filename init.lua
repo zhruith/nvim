@@ -19,16 +19,19 @@ require "lazy".setup {
         { 'ms-jpq/coq.thirdparty', branch = "3p" }
       },
       init = function()
-        vim.g.coq_settings = { auto_start = true }
+        -- vim.g.coq_settings = { auto_start = true }
+        vim.defer_fn(function() vim.cmd("COQnow --shut-up") end, 0)
       end,
     },
     { 'shatur/neovim-ayu',
       config = function()
         -- local nobg = { bg = '' }
+        local hl = { bg = "#333333" }
         require("ayu").setup {
           mirage = false, terminal = true,
           overrides = {
             -- Normal = nobg, SignColumn = nobg, WinSeparator = { fg = "#1B3A5B", bg = "" },
+            Visual = hl,
             NormalFloat = { bg = "black" },
           } }
         require("ayu").colorscheme()
@@ -142,8 +145,11 @@ require "lazy".setup {
   },
 }
 ------ nvim-lspconfig----------------------------------------------------------------------------
-local setup = {
-  pylsp = { settings = { pylsp = { plugins = { ruff = { lineLength = 120, ignore = { 'E401' } } } } } },
+local my_config = {
+  pylsp = {
+    filetypes = { "python", "cython" },
+    settings = { pylsp = { plugins = { ruff = { lineLength = 120, ignore = { 'E401' } } } } }
+  },
   lua_ls = {
     settings = { Lua = {} },
     on_init = function(client)
@@ -162,21 +168,23 @@ local setup = {
       }
     }
   },
-  ts_ls = {
-    filetypes = { "javascript", "typescript", "vue" },
-    init_options = {
-      plugins = { {
-        name = "@vue/typescript-plugin",
-        location = "U:/scoop/.npm-global/node_modules/@vue/typescript-plugin",
-        languages = { "javascript", "typescript", "vue" },
-      } }
-    }
+  vtsls = {
+    filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue' },
+    settings = {
+      vtsls = { tsserver = { globalPlugins = { { name = '@vue/typescript-plugin', languages = { 'vue' } } } } },
+    },
   },
 }
-for _, item in pairs({ 'lua_ls', 'volar', 'clangd', 'nushell', 'astro', 'html', 'jsonls', 'cssls', 'taplo',
-  'cmake', 'glsl_analyzer', 'rust_analyzer', 'ts_ls', 'pylsp' }) do
-  require('lspconfig')[item].setup(setup[item] == nil and {} or setup[item])
+for _, ls in pairs({ 'lua_ls', 'clangd', 'nushell', 'astro', 'html', 'jsonls', 'cssls', 'taplo',
+  'cmake', 'glsl_analyzer', 'rust_analyzer', 'pylsp', 'vtsls', 'vue_ls' }) do
+  vim.lsp.config(ls, require("coq").lsp_ensure_capabilities(my_config[ls]))
+  vim.lsp.enable(ls)
 end
+
+------ nvim-lspconfig----------------------------------------------------------------------------
+vim.diagnostic.config({
+  virtual_lines = { current_line = true }
+})
 
 ---------------- terminal function -------------------------------------------
 local function terminal_create(cmd)
@@ -246,6 +254,7 @@ keyset({ "n", "x" }, "gl", "$", opts)
 keyset("n", "gc", "M", opts)
 keyset("n", "ge", "G", opts)
 -- misc keyshot
+keyset("n", ",", ":nohl<cr>", opts)
 keyset("n", "t", ":BufferLinePick<cr>", opts)
 keyset("n", "<S-A-c>", ":e $MYVIMRC<cr>", opts)
 keyset("n", "<S-A-r>", ":luafile %<cr>", opts)
@@ -303,7 +312,7 @@ for key, value in pairs({
   wrap = false,
   backup = false,
   writebackup = false,
-  hlsearch = false,
+  -- hlsearch = false,
   timeout = false,
   ignorecase = true,
   smartcase = true,
@@ -324,6 +333,7 @@ for key, value in pairs({
   wildignore = "*.dll,*.exe,*.jpg,*.gif,*.png",
 }) do vim.opt[key] = value end
 -- hard to batch settings
+vim.cmd('set nohlsearch')
 vim.cmd('filetype indent plugin on')
 vim.cmd('set fillchars+=eob:\\ ')
 vim.cmd('set shell=nu')
